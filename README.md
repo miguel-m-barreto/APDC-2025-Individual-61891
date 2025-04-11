@@ -3,16 +3,16 @@
 ## 
 
 
-# ADC-App-Engine
+## ADC-App-Engine
  - Cloud app id:
 &nbsp;
-# COMMANDS (RUNNING AND DEPLOYMENT)
-## GCLOUD
-### Check gcloud version:
+## COMMANDS (RUNNING AND DEPLOYMENT)
+### GCLOUD
+#### Check gcloud version:
     gcloud -v
-### Login to gcloud:
+#### Login to gcloud:
     gcloud auth login
-### Initialize gcloud:
+#### Initialize gcloud:
     gcloud init
 &nbsp;
 &nbsp;
