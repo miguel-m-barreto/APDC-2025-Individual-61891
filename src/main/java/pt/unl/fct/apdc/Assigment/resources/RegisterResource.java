@@ -155,6 +155,13 @@ public class RegisterResource {
 		}
 	}	
 
+	/*
+	 * This method is used to register a user in the system. It receives a JSON object
+	 * with the user data (username, password, email and name),
+	 * and it creates a new entity in the datastore with the user
+	 * data. The password is hashed using SHA-512 algorithm.
+	 * the creation time is also stored
+	 */
 	@POST
 	@Path("/v4")
 	@Consumes(MediaType.APPLICATION_JSON)

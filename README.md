@@ -172,3 +172,6 @@ Muito parecido com o POST (mas usado para manipular algo que já existe)
 -   Obter (get) uma entidade a partir de uma chave e criar uma nova se não existir 
 -   As falhas nas transações de leitura-escrita podem ser resolvidas tentando novamente a transação (um número limitado de vezes) ou propagando o erro para o utilizador
 -   As transações de leitura são utilizadas quando é necessário ter uma visão consistente dos dados que é construída por diversas consultas independentes
+
+## CLOUD STORAGE
+Armazenamento genérico de objectos persistentes

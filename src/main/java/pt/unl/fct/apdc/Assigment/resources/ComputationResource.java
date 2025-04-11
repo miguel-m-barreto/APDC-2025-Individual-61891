@@ -83,6 +83,7 @@ public class ComputationResource {
 
 	@POST
 	@Path("/compute")
+	// POST http://localhost:8080/rest/utils/compute
 	public Response executeComputeTask() {
 		LOG.fine("Starting execute computation task.");
 		try {
