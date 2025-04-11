@@ -69,26 +69,39 @@
     mvn install 
 ### Command used to run the project locally (Package the project and runs it locally):
     mvn package appengine:run 
-### Run the project locally with bind to listen to all addresses (ports must be open):
-    mvn spring-boot:run -Dspring-boot.run.arguments=--server.address=0.0.0.0
-or with app engine
+or
     
+    mvn clean package appengine:run
+### Run the project locally with bind to listen to all addresses (ports must be open):  
     mvn package appengine:run -Dappengine.run.host=0.0.0.0
-
+or
+    
+    mvn clean package appengine:run -Dappengine.run.host=0.0.0.0
 ### Deploy the project (with the App Engine plugin):
     mvn appengine:deploy 
 or
 
-    mvn package appengine:deploy -Dapp.deploy.projectId=<id-da-aplicação> -Dapp.deploy.version=<version number>
+    mvn package appengine:deploy -Dapp.deploy.projectId=<app-id> -Dapp.deploy.version=<version number>
+I am using
+    
+    mvn package -e -X appengine:deploy -Dapp.deploy.projectId=<app-id> -Dapp.deploy.version=<version number>
+
+-   -e (short for --errors) Shows full stack traces if there’s an error. Without -e, Maven only shows a summary
+
+-   -X (short for --debug) Enables full debug logging, this includes:
+    -   Every phase and goal being executed
+    -   Every system property, plugin config, and path
+    -   Details about classloading, dependency resolution, etc.
+    -   Useful if something isn’t behaving right or hunting for a weird bug.
+
 example:
 
     mvn package appengine:deploy -Dapp.deploy.projectId=shining-expanse-453014-c4 -Dapp.deploy.version=1
     
 - <id-da-aplicação> é o id único da vossa aplicação extraído da consola do Google Cloud (vimos no inicio)
 - <version number> é um numero que identifica a versão da aplicação (costuma ser crescente e começa em 1)
-
 ### Run the project (with the App Engine plugin):
-    mvn appengine:run
+    mvn appengine:run    
 
 &nbsp;
 &nbsp;
