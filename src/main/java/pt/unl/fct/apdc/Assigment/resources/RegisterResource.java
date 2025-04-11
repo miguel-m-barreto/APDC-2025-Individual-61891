@@ -137,7 +137,8 @@ public class RegisterResource {
 			} else {
 				 // ... otherwise
 				user = Entity.newBuilder(userKey).set("user_name", data.name)
-						.set("user_pwd", DigestUtils.sha512Hex(data.password)).set("user_email", data.email)
+						.set("user_pwd", DigestUtils.sha512Hex(data.password))
+						.set("user_email", data.email)
 						.set("user_creation_time", Timestamp.now()).build();
 				// get() followed by put() inside a transaction is ok...
 				txn.put(user);
