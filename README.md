@@ -96,20 +96,10 @@ example:
 # Summary
 ## GCLOUD
 ### Use older version
-- Para usar versões anteriores à versão de deployed mais atual 
-&nbsp;
-
-basta adicionar um x. a seguir ao https://
-&nbsp;
-
+- Para usar versões anteriores à versão de deployed mais atual basta adicionar um x. a seguir ao https://
 - x é o número da versão que queremos usar 
-&nbsp;
-
-No browser vai dar um alerta devido ao certificado https
-&nbsp;
-
-- Exemplo
-    https://1.shining-expanse-453014-c4.oa.r.appspot.com
+- No browser vai dar um alerta devido ao certificado https
+- Exemplo: https://1.shining-expanse-453014-c4.oa.r.appspot.com
 
 &nbsp;
 &nbsp;
