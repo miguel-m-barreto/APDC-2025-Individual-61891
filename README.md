@@ -2,10 +2,15 @@
 
 ## 
 
+&nbsp;
+&nbsp;
 
 ## ADC-App-Engine
  - Cloud app id:
+
 &nbsp;
+&nbsp;
+
 ## COMMANDS (RUNNING AND DEPLOYMENT)
 ### GCLOUD
 #### Check gcloud version:
@@ -14,8 +19,10 @@
     gcloud auth login
 #### Initialize gcloud:
     gcloud init
+
 &nbsp;
 &nbsp;
+
 ### GIT
 #### Check Git version:
     git -v 
@@ -39,8 +46,10 @@
     git push 
 #### Pull the files from the repository (remote to local):
     git pull 
+
 &nbsp;
 &nbsp;
+
 ### MAVEN
 #### Check Maven version:
     mvn -version 
@@ -81,6 +90,8 @@ example:
 #### Run the project (with the App Engine plugin):
     mvn appengine:run
 
+&nbsp;
+&nbsp;
 
 ## Summary
 ### GCLOUD
@@ -95,6 +106,9 @@ No browser vai dar um alerta devido ao certificado https
 &nbsp;
 - Exemplo
     https://1.shining-expanse-453014-c4.oa.r.appspot.com
+
+&nbsp;
+&nbsp;
 
 ### REST
 
