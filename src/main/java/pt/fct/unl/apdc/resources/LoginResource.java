@@ -34,6 +34,7 @@ public class LoginResource {
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
+	// POST http://localhost:8080/rest/login/
 	public Response doLogin(LoginData data) {
 		LOG.fine("Login attempt by user: " + data.username);
 		
@@ -58,7 +59,7 @@ public class LoginResource {
 	*/
 	@GET
 	@Path("/{username}") // diz que o username é um parâmetro de entrada e vai ser passado na URL
-	// GET http://localhost:8080/apdc/api/login/almiscar é suposto retornar false
+	// GET http://localhost:8080/rest/login/almiscar é suposto retornar false
 	// false = not available
 	public Response checkUsernameAvailable(@PathParam("username") String username) {
 		if (username.trim().equals("almiscar")) {

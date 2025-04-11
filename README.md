@@ -113,6 +113,11 @@ example:
 - x é o número da versão que queremos usar 
 - No browser vai dar um alerta devido ao certificado https
 - Exemplo: https://1.shining-expanse-453014-c4.oa.r.appspot.com
+### Migrate traffic:
+- Para escolher-mos qual a versão que deve ser utilizada:
+    -   vamos a app engine -> versions
+    -   selecionamos a versão que desejamos
+    -   clica-mos em Migrate Traffic
 
 &nbsp;
 &nbsp;
@@ -121,13 +126,10 @@ example:
 
 ### GET:
 @GET: Só pode receber parâmetros pelo URL (@Path)
-
 ### POST:
 @POST: Pode receber parâmetros pelo URL (@Path) e pelo body do pedido HTTP (usando a anotação @Consumes)
-
 ### PUT:
 @PUT: 
 Muito parecido com o POST (mas usado para manipular algo que já existe) 
-
 ### DELETE:
 @DELETE: Muito parecido com o GET (mas usado para remover recursos)

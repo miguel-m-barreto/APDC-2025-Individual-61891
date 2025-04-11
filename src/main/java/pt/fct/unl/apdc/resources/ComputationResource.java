@@ -58,6 +58,20 @@ public class ComputationResource {
 	
 	@GET
 	@Path("/compute")
+	public Response executeComputeTask() {
+		LOG.fine("Starting execute computation task.");
+		try {
+			// Simulate a long computation task
+			Thread.sleep(60*1000*10); // Sleep for 5 seconds
+		} catch (InterruptedException e) {
+			LOG.logp(Level.SEVERE, this.getClass().getCanonicalName(), "executeComputeTask", "Task interrupted an exception ocurred", e);
+			return Response.serverError().entity("Computation task interrupted").build();
+		}
+		return Response.ok().entity("Computation task completed").build();
+	}
+
+	@GET
+	@Path("/triggerCompute")
 	public Response triggerExecuteComputeTask() throws IOException {
 		String projectId = "quantum-shard-415522";
 		String queueName = "Default";
@@ -75,4 +89,6 @@ public class ComputationResource {
 		} 
 		return Response.ok().build();
 	}
+
+	
 }
