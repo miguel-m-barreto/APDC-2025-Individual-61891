@@ -67,6 +67,7 @@ public class ComputationResource {
 
 		try (CloudTasksClient client = CloudTasksClient.create()) {
 			String queuePath = QueueName.of(projectId, location, queueName).toString();
+			
 			Task.Builder taskBuilder = 
 				Task.newBuilder().setAppEngineHttpRequest(AppEngineHttpRequest.newBuilder()
 						.setRelativeUri("/rest/utils/compute").setHttpMethod(HttpMethod.POST)
@@ -76,7 +77,7 @@ public class ComputationResource {
 			
 			client.createTask(queuePath, taskBuilder.build());
 		} 
-		
+
 		return Response.ok().build();
 	}
 
