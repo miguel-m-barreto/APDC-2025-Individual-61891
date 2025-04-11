@@ -108,7 +108,7 @@ basta adicionar um x. a seguir ao https://
 
 &nbsp;
 
-no browser vai dar um alerta devido ao certificado https
+No browser vai dar um alerta devido ao certificado https
 
 &nbsp;
 
