@@ -42,19 +42,31 @@ public class LoginResource {
 			return Response.ok(g.toJson(at)).build();
 		}
 
+		// Se o username ou password estiverem errados, retorna um erro 403 (Forbidden)
+		// 403 - Forbidden: O servidor entendeu o pedido, mas recusa-se a autorizá-lo.
 		return Response.status(Status.FORBIDDEN).entity("Incorrect username or password.").build();
 
 		// 	response.ok().build() dá return do code HTTP 200 
 		/* 
-			return Response.ok(new AuthToken(data.username)).build();
+		*	return Response.ok(new AuthToken(data.username)).build();
 		*/
 	}
 	
+	/* 	
+	*	Valores entre {} no @PATH representam variáveis, ou seja 
+	*	valores de entrada que são enviados no URL
+	*/
 	@GET
-	@Path("/{username}")
+	@Path("/{username}") // diz que o username é um parâmetro de entrada e vai ser passado na URL
+	// GET http://localhost:8080/apdc/api/login/almiscar é suposto retornar false
+	// false = not available
 	public Response checkUsernameAvailable(@PathParam("username") String username) {
+		if (username.trim().equals("almiscar")) {
+			return Response.ok().entity(g.toJson(false)).build();					
+		} else {
+			return Response.ok().entity(g.toJson(true)).build();
+		}
 		
-		return Response.ok().entity(g.toJson(true)).build();
 	}
 
 }

@@ -80,3 +80,21 @@ example:
 
 ### Run the project (with the App Engine plugin):
     mvn appengine:run
+
+
+# Summary
+
+## REST
+
+### GET
+@GET: Só pode receber parâmetros pelo URL (@Path)
+
+### POST
+@POST: Pode receber parâmetros pelo URL (@Path) e pelo body do pedido HTTP (usando a anotação @Consumes)
+
+### PUT
+@PUT: 
+Muito parecido com o POST (mas usado para manipular algo que já existe) 
+
+### DELETE
+@DELETE: Muito parecido com o GET (mas usado para remover recursos)
