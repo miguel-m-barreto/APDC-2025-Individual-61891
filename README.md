@@ -32,6 +32,11 @@
 Before the first deploy, run:
 
     gcloud beta emulators datastore env-init
+Example:
+
+    gcloud config set project shining-expanse-453014-c4-id
+    export DATASTORE_USE_PROJECT_ID_AS_APP_ID=true
+    gcloud beta emulators datastore env-init
 
 &nbsp;
 &nbsp;
@@ -146,3 +151,24 @@ example:
 Muito parecido com o POST (mas usado para manipular algo que já existe) 
 ### DELETE:
 @DELETE: Muito parecido com o GET (mas usado para remover recursos)
+
+## DATASTORE
+
+### Níveis de isolamento e consistência:
+-   No modo Datastore é utilizado isolamento serializável: dados lidos ou modificados por uma transação não podem ser modificados simultaneamente.
+-   As consultas numa transação veem um snapshot consistente da base de dados contendo o efeito de todas as transações e escritas completadas antes do início das transações.
+-   ATENÇÃO que as escritas e remoções realizadas dentro de uma transação não ficam visíveis dentro da transação!
+-   Fora das transações as consultas e buscas também têm isolamento serializável
+### Modos de concorrência:
+-   PESSIMISTA:
+    -   As transações podem ficar bloqueadas quando duas ou mais transações de leitura-escrita (read-write) concorrentes leem ou escrevem os mesmos dados. Transações somente leitura (read) não ficam bloqueadas. Este é o modo padrão.
+-   OTIMISTA:
+    -   Quando duas ou mais transações de leitura-escrita concorrentes leem ou escrevem os mesmos dados, apenas a primeira transação a confirmar suas mudanças tem sucesso. Outras transações que realizam escritas falham aquando da confirmação.
+-   OTIMISTA EM GRUPOS DE ENTIDADES:
+    -   modo antigo
+
+### Utilizações de transações:
+-   Atualizar/escrever uma nova propriedade de uma entidade dependente de valores de propriedades de outras entidades
+-   Obter (get) uma entidade a partir de uma chave e criar uma nova se não existir 
+-   As falhas nas transações de leitura-escrita podem ser resolvidas tentando novamente a transação (um número limitado de vezes) ou propagando o erro para o utilizador
+-   As transações de leitura são utilizadas quando é necessário ter uma visão consistente dos dados que é construída por diversas consultas independentes

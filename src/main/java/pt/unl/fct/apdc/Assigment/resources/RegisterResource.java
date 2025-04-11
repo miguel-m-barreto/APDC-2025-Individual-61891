@@ -34,6 +34,12 @@ public class RegisterResource {
 
 	public RegisterResource() {}	// Default constructor, nothing to do
 	
+	/*
+	 * This method is used to register a user in the system. It receives a JSON object
+	 * with the user data (username and password), and it creates a new entity in the datastore with the user
+	 * data. The password is hashed using SHA-512 algorithm.
+	 * the creation time is also stored
+	 */
 	@POST
 	@Path("/v1")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -50,6 +56,17 @@ public class RegisterResource {
 		return Response.ok().entity(g.toJson(true)).build();
 	}
 	
+	/*
+	 * This method is used to register a user in the system. It receives a JSON object
+	 * with the user data (username, password, email and name),
+	 * and it creates a new entity in the datastore with the user
+	 * data. The password is hashed using SHA-512 algorithm.
+	 * the creation time is also stored
+	 * 
+	 * The method checks if the user already exists in the datastore, and if it does, it returns a 400 error.
+	 * If the user does not exist, it creates a new entity in the datastore with the user data.
+	 * The method also checks if the data is valid, and if it is not, it returns a 400 error.
+	 */
 	@POST
 	@Path("/v2")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -82,6 +99,22 @@ public class RegisterResource {
 		return Response.ok().build();
 	}
 	
+	/*
+	 * This method is used to register a user in the system. It receives a JSON object
+	 * with the user data (username, password, email and name),
+	 * and it creates a new entity in the datastore with the user
+	 * data. The password is hashed using SHA-512 algorithm.
+	 * the creation time is also stored
+	 * 
+	 * The method checks if the user already exists in the datastore, and if it does, it returns a 409 error.
+	 * If the user does not exist, it creates a new entity in the datastore with the user data.
+	 * The method also checks if the data is valid, and if it is not, it returns a 400 error.
+	 * 
+	 * The method uses a transaction to ensure that the user is created atomically.
+	 * If the transaction fails, it returns a 500 error.
+	 * If the transaction is successful, it returns a 200 OK response.
+	 * 
+	 */
 	@POST
 	@Path("/v3")
 	@Consumes(MediaType.APPLICATION_JSON)

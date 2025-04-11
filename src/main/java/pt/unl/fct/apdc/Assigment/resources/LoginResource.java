@@ -88,14 +88,14 @@ public class LoginResource {
 
 		// 	response.ok().build() dá return do code HTTP 200 
 		/* 
-		*	return Response.ok(new AuthToken(data.username)).build();
-		*/
+		 *	return Response.ok(new AuthToken(data.username)).build();
+		 */
 	}
 	
 	/* 	
-	*	Valores entre {} no @PATH representam variáveis, ou seja 
-	*	valores de entrada que são enviados no URL
-	*/
+	 *	Valores entre {} no @PATH representam variáveis, ou seja 
+	 *	valores de entrada que são enviados no URL
+	 */
 	@GET
 	@Path("/{username}") // diz que o username é um parâmetro de entrada e vai ser passado na URL
 	// GET http://localhost:8080/rest/login/almiscar é suposto retornar false
@@ -109,6 +109,13 @@ public class LoginResource {
 		
 	}
 
+	/*
+	 * Este método é usado para fazer login de um utilizador no sistema. 
+	 * Ele recebe um JSON com os dados do utilizador (username e password) e verifica se o utilizador existe na base de dados. 
+	 * Se o utilizador existir, ele verifica se a password está correta. 
+	 * Se a password estiver correta, ele retorna um token de autenticação. 
+	 * Se a password estiver errada ou o utilizador não existir, ele retorna um erro 403 (Forbidden).
+	 */
 	@POST
 	@Path("/v1")
 	@Consumes(MediaType.APPLICATION_JSON)
