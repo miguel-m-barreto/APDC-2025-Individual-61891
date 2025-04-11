@@ -1,4 +1,4 @@
-package pt.fct.unl.apdc.util;
+package pt.unl.fct.apdc.assigment.util;
 
 public class LoginData {
 	

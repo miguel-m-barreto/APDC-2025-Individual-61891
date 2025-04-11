@@ -1,4 +1,4 @@
-package pt.fct.unl.apdc.resources;
+package pt.unl.fct.apdc.assigment.resources;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,8 +37,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response.Status;
-import pt.fct.unl.apdc.util.AuthToken;
-import pt.fct.unl.apdc.util.LoginData;
+import pt.unl.fct.apdc.assigment.util.AuthToken;
+import pt.unl.fct.apdc.assigment.util.LoginData;
 
 
 

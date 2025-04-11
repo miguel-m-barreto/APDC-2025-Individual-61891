@@ -23,6 +23,19 @@
 &nbsp;
 &nbsp;
 
+## GCLOUD DATASTORE
+### Run emulator:
+    gcloud beta emulators datastore start
+### CONFIG ENVIRONMENT VARIABLES (unix):
+    gcloud config set project <project-id>
+    export DATASTORE_USE_PROJECT_ID_AS_APP_ID=true
+Before the first deploy, run:
+
+    gcloud beta emulators datastore env-init
+
+&nbsp;
+&nbsp;
+
 ## GIT
 ### Check Git version:
     git -v 
