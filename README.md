@@ -95,7 +95,7 @@ example:
 
 # Summary
 ## GCLOUD
-### Use older version
+### Use older version:
 - Para usar versões anteriores à versão de deployed mais atual basta adicionar um x. a seguir ao https://
 - x é o número da versão que queremos usar 
 - No browser vai dar um alerta devido ao certificado https
@@ -106,15 +106,15 @@ example:
 
 ## REST
 
-### GET
+### GET:
 @GET: Só pode receber parâmetros pelo URL (@Path)
 
-### POST
+### POST:
 @POST: Pode receber parâmetros pelo URL (@Path) e pelo body do pedido HTTP (usando a anotação @Consumes)
 
-### PUT
+### PUT:
 @PUT: 
 Muito parecido com o POST (mas usado para manipular algo que já existe) 
 
-### DELETE
+### DELETE:
 @DELETE: Muito parecido com o GET (mas usado para remover recursos)
