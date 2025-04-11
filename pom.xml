@@ -59,8 +59,6 @@
 		    <version>3.1.10</version>
 		</dependency>
 
-
-
 		<dependency> 
 		    <groupId>org.glassfish.jersey.inject</groupId>
 		    <artifactId>project</artifactId>
@@ -112,13 +110,12 @@
 		    <version>3.0.0</version>
 		</dependency>
 -->
-		
-
 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-tasks</artifactId>
