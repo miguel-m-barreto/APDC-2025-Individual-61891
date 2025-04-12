@@ -32,13 +32,14 @@ public class RegisterResource {
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 	private static final String DEFAULT_ROLE_STRING = "ENDUSER";
 	private static final String DEFAULT_STATE_STRING = "DESATIVADA";
-	private static final String DEFAULT_USER_PHOTO = "https://storage.cloud.google.com/shining-expanse-453014-c4.appspot.com/default_user.jpeg";
+	private static final String DEFAULT_USER_PHOTO = "https://storage.googleapis.com/shining-expanse-453014-c4.appspot.com/default_user.jpeg";
 	private static final String EMPTY_STRING = "";
 
 	//private final Gson g = new Gson();
 
 
-	public RegisterResource() {}	// Default constructor, nothing to do		
+	public RegisterResource() {
+	}	// Default constructor, nothing to do		
 
 	/*
 	 * This method is used to register a user in the system. It receives a JSON object
