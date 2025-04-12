@@ -1,4 +1,4 @@
-package pt.unl.fct.apdc.assigment.util;
+package pt.unl.fct.apdc.assignment.util;
 
 import java.util.UUID;
 

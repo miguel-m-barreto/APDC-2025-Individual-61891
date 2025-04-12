@@ -1,4 +1,4 @@
-package pt.unl.fct.apdc.assigment.filters;
+package pt.unl.fct.apdc.assignment.filters;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package pt.unl.fct.apdc.assigment.resources;
+package pt.unl.fct.apdc.assignment.resources;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,8 +37,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response.Status;
-import pt.unl.fct.apdc.assigment.util.AuthToken;
-import pt.unl.fct.apdc.assigment.util.LoginData;
+import pt.unl.fct.apdc.assignment.util.AuthToken;
+import pt.unl.fct.apdc.assignment.util.LoginData;
 
 
 
@@ -67,108 +67,7 @@ public class LoginResource {
 		
 	}
 	
-	//JAKARTA
-	@POST
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	// POST http://localhost:8080/rest/login/
-	public Response doLogin(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-		
-		if(data.username.equals("almiscar") && data.password.equals("123")) { 
-			AuthToken at = new AuthToken(data.username);
-			return Response.ok(g.toJson(at)).build();
-		}
 
-		// Se o username ou password estiverem errados, retorna um erro 403 (Forbidden)
-		// 403 - Forbidden: O servidor entendeu o pedido, mas recusa-se a autorizá-lo.
-		return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-
-		// 	response.ok().build() dá return do code HTTP 200 
-		/* 
-		 *	return Response.ok(new AuthToken(data.username)).build();
-		 */
-	}
-	
-	/* 	
-	 *	Valores entre {} no @PATH representam variáveis, ou seja 
-	 *	valores de entrada que são enviados no URL
-	 */
-	
-	 /*
-	@GET
-	@Path("/{username}") // diz que o username é um parâmetro de entrada e vai ser passado na URL
-	// GET http://localhost:8080/rest/login/almiscar é suposto retornar false
-	// false = not available
-	public Response checkUsernameAvailable(@PathParam("username") String username) {
-		if (username.trim().equals("almiscar")) {
-			return Response.ok().entity(g.toJson(false)).build();					
-		} else {
-			return Response.ok().entity(g.toJson(true)).build();
-		}
-		
-	}
-		*/
-
-
-	/*
-	 * Este método é usado para verificar se o username está disponível ou não.
-	 * Ele recebe um JSON com os dados do utilizador (username e password) e verifica se o utilizador existe na base de dados.
-	 * Se o utilizador existir, ele verifica se a password está correta.
-	 * Se a password estiver correta, ele retorna um token de autenticação.
-	 * Se a password estiver errada ou o utilizador não existir, ele retorna um erro 403 (Forbidden).
-	 * Se o utilizador não existir, ele retorna true (username disponível).
-	 * Se o utilizador existir, ele retorna false (username não disponível) e também retorna a data do último login do utilizador.
-	 * Se o utilizador não existir, ele retorna null (sem data de login).
-	 */
-	//@Path("/user") // diz que o username é um parâmetro de entrada e vai ser passado na URL
-	/*
-	@GET
-	@Path("/user")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response checkUsernameAvailable(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-		
-		Key userKey = userKeyFactory.newKey(data.username);
-		Entity user = datastore.get(userKey);
-		if (user != null && user.getString(USER_PWD).equals(DigestUtils.sha512Hex(data.password))) {
-			LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, 1); // Adiciona 1 dia à data atual
-			Timestamp yesterday = Timestamp.of(cal.getTime());
-
-			Query<Entity> query = Query.newEntityQueryBuilder()
-					.setKind("UserLog")
-					.setFilter(
-							CompositeFilter.and(
-									PropertyFilter.hasAncestor(
-										datastore.newKeyFactory().setKind("User").newKey(data.username)),
-									PropertyFilter.ge(USER_LOGIN_TIME, yesterday)
-									)
-							)
-					.build();
-			
-			QueryResults<Entity> logs = datastore.run(query);
-
-			List<Date> loginDates = new ArrayList<>();
-			logs.forEachRemaining(userlog -> {
-				loginDates.add(userlog.getTimestamp(USER_LOGIN_TIME).toDate());
-			});
-
-			return Response.ok(g.toJson(loginDates)).build();					
-		} else {
-			return Response.ok().entity(g.toJson(true)).build();
-		}
-		
-	}
-	*/
-
-	/*
-	 * Same as v1 But with ordering
-	 */
 	@GET
 	@Path("/user")
 	@Consumes(MediaType.APPLICATION_JSON)

@@ -1,4 +1,4 @@
-package pt.unl.fct.apdc.assigment.resources;
+package pt.unl.fct.apdc.assignment.resources;
 
 import java.io.IOException;
 import java.net.URI;

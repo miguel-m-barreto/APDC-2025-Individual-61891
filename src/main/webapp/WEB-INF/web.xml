@@ -35,7 +35,7 @@
 		-->
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>pt.unl.fct.apdc.assigment.filters.AdditionalResponseHeadersFilter</param-value>
+			<param-value>pt.unl.fct.apdc.assignment.filters.AdditionalResponseHeadersFilter</param-value>
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.servlet.filter.contextPath</param-name>
@@ -45,9 +45,9 @@
 			<param-name>jersey.config.server.provider.packages</param-name>
 			<!--
 				Recursos Rest que processam pedidos.
-				os recursos devem ser colocados na pasta pt.unl.fct.apdc.assigment.resources
+				os recursos devem ser colocados na pasta pt.unl.fct.apdc.assignment.resources
 			-->
-			<param-value>pt.unl.fct.apdc.assigment.resources</param-value>
+			<param-value>pt.unl.fct.apdc.assignment.resources</param-value>
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.scanning.recursive</param-name>
