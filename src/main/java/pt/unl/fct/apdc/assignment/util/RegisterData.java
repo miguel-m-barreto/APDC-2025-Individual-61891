@@ -31,7 +31,7 @@ public class RegisterData {
 	
 	public RegisterData(String username, String password, String confirmation, String email, 
 						String name, String phone, String profileType, String cc, String nif,
-						String employer, String job, String address, String employerNIF) {
+						String employer, String job, String address, String employerNIF, String photo) {
 		// Mandatory data
 		this.username = username;
 		this.password = password;
@@ -50,6 +50,7 @@ public class RegisterData {
 		this.job = job;
 		this.address = address;
 		this.employerNIF = employerNIF;
+		this.photo = photo;
 	}
 	
 	private String normalizeProfileType(String input) {

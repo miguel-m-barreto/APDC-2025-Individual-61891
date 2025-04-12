@@ -38,7 +38,7 @@ public class RegisterResource {
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 	private static final String ROLE_STRING = "ENDUSER";
 	private static final String STATE_STRING = "DESATIVADA";
-	private static final String BUCKET_NAME = "shining-expanse-453014-c4.appspot.com";
+	private static final String DEFAULT_USER_PHOTO = "https://storage.cloud.google.com/shining-expanse-453014-c4.appspot.com/default_user.jpeg";
 	
 	private final Gson g = new Gson();
 
@@ -78,6 +78,10 @@ public class RegisterResource {
 					.entity("Email already in use.").build();
 			}
 
+			data.photo = MediaUtil.resolvePhotoUrlOrUpload( data.photo,
+															data.username,
+															LOG);
+
 			Entity user = Entity.newBuilder(userKey)
 			.set("user_name", data.name)
 			.set("user_pwd", DigestUtils.sha512Hex(data.password))
@@ -94,7 +98,7 @@ public class RegisterResource {
 			.set("user_job", data.job != null ? data.job : "")
 			.set("user_address", data.address != null ? data.address : "")
 			.set("user_employer_nif", data.employerNIF != null ? data.employerNIF : "")
-			.set("user_photo_url", data.photo != null ? data.photo : "https://storage.cloud.google.com/shining-expanse-453014-c4.appspot.com/default_user.jpeg")
+			.set("user_photo_url", data.photo != null ? data.photo : DEFAULT_USER_PHOTO)
 			.build();
 
 			datastore.add(user);
