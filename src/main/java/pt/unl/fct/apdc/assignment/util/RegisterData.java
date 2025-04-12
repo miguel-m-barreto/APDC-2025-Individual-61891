@@ -102,6 +102,6 @@ public class RegisterData {
 				(employerNIF == null || employerNIF.matches("[0-9]{9}")) &&
 				(job == null || job.length() <= 32) &&
 				(address == null || address.length() <= 100) &&
-				(employer == null || employer.length() <= 32)&&
+				(employer == null || employer.length() <= 32);
 	}
 }

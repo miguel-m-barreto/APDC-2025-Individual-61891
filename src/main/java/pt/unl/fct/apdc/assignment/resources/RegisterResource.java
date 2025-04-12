@@ -28,7 +28,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import pt.unl.fct.apdc.assignment.util.LoginData;
-import pt.unl.fct.apdc.assignment.util.MediaUtil;
 import pt.unl.fct.apdc.assignment.util.RegisterData;
 
 @Path("/register")
@@ -60,9 +59,7 @@ public class RegisterResource {
 		LOG.fine("Attempt to register user: " + data.username);
 		
 		if(!data.validRegistration())
-			return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();
-		
-		
+			return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();		
 		
 		try {
 			Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);

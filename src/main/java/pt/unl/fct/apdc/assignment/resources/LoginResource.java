@@ -111,136 +111,7 @@ public class LoginResource {
 	}
 
 	/*
-	 * Simple login
-	 * Este método é usado para fazer login de um utilizador no sistema. 
-	 * Ele recebe um JSON com os dados do utilizador (username e password) e verifica se o utilizador existe na base de dados. 
-	 * Se o utilizador existir, ele verifica se a password está correta. 
-	 * Se a password estiver correta, ele retorna um token de autenticação. 
-	 * Se a password estiver errada ou o utilizador não existir, ele retorna um erro 403 (Forbidden).
-	 */
-	@POST
-	@Path("/v1")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	// POST http://localhost:8080/rest/login/v1
-	public Response doLoginV1(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = (String) user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	/*
-	 * Login with time stamp
-	 * Este método é usado para fazer login de um utilizador no sistema.
-	 * Ele recebe um JSON com os dados do utilizador (username e password) e verifica se o utilizador existe na base de dados.
-	 * Se o utilizador existir, ele verifica se a password está correta.
-	 * Se a password estiver correta, ele atualiza o tempo de login do utilizador na base de dados e retorna um token de autenticação.
-	 * Se a password estiver errada ou o utilizador não existir, ele retorna um erro 403 (Forbidden).
-	 */
-	@POST
-	@Path("/v1a")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV1a(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = (String) user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				user = Entity.newBuilder(user)
-						.set(USER_LOGIN_TIME, Timestamp.now())
-						.build();
-				datastore.update(user);
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	/*
-	 * Login with time stamp and log
-	 * Este método é usado para fazer login de um utilizador no sistema.
-	 * Ele recebe um JSON com os dados do utilizador (username e password) e verifica se o utilizador existe na base de dados.
-	 * Se o utilizador existir, ele verifica se a password está correta.
-	 * Se a password estiver correta, ele atualiza o tempo de login do utilizador na base de dados e retorna um token de autenticação.
-	 * Se a password estiver errada ou o utilizador não existir, ele retorna um erro 403 (Forbidden).
-	 * Este método também cria um log de login para o utilizador, que é armazenado na base de dados.
-	 * O log contém o tempo de login do utilizador.
-	 */
-	@POST
-	@Path("/v1b")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV1b(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				KeyFactory logKeyFactory = datastore.newKeyFactory()
-						.addAncestor(PathElement.of("User", data.username))
-						.setKind("UserLog");
-				Key logKey = datastore.allocateId(logKeyFactory.newKey());
-				Entity userLog = Entity.newBuilder(logKey)
-						.set(USER_LOGIN_TIME, Timestamp.now())
-						.build();
-				datastore.put(userLog);
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	/*
-	 * Criar um serviço REST que permita efetuar o login de um utilizador
+	 * Criar um serviço REST que permite efetuar o login de um utilizador
 	 * Recebe input em JSON com propriedades username e password
 	 * Verifica se password é correta e devolve token
 	 * 
@@ -248,14 +119,14 @@ public class LoginResource {
 	 * e atualiza contador com número de logins com sucesso e falhados
 	 */
 	@POST
-	@Path("/v2")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	// POST http://localhost:8080/rest/login/v2
+	// POST http://localhost:8080/rest/login/
 	// To get parameters and headers from the request, we need to use @Context
 	// @Context HttpServletRequest request
 	// @Context HttpHeaders headers
-	public Response doLoginV2(LoginData data,
+	public Response doLogin(LoginData data,
 			@Context HttpServletRequest request,
 			@Context HttpHeaders headers) {
 		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
@@ -336,7 +207,6 @@ public class LoginResource {
 				// Copying here is even worse. Propose a better solution!
 				Entity ustats = Entity.newBuilder(ctrsKey)
 						.set("user_stats_logins", stats.getLong("user_stats_logins"))
-						// 1L means long value
 						.set("user_stats_failed", stats.getLong("user_stats_failed") + 1L)
 						.set("user_first_login", stats.getTimestamp("user_first_login"))
 						.set("user_last_login", stats.getTimestamp("user_last_login"))
