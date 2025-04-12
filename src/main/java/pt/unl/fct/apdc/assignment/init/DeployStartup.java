@@ -1,4 +1,4 @@
-package pt.unl.fct.apdc.assignment.util;
+package pt.unl.fct.apdc.assignment.init;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
@@ -6,10 +6,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.logging.Logger;
 
-public class DeployUtils {
+public class DeployStartup {
 
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-    private static final Logger LOG = Logger.getLogger(DeployUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(DeployStartup.class.getName());
 
     private static final String ROOT_USERNAME = "root";
     private static final String ROOT_PASSWORD = "Admin123.";
@@ -40,11 +40,11 @@ public class DeployUtils {
                     .set("user_phone", ROOT_PHONE)
                     .set("user_profile", ROOT_PROFILE)
                     .set("user_role", ROOT_ROLE)
-                    .set("user_state", ROOT_STATE)
+                    .set("user_account_state", ROOT_STATE)
                     .set("user_creation_time", Timestamp.now())
-                    .set("user_photo", ROOT_PHOTO)
+                    .set("user_photo_url", ROOT_PHOTO)
                     .build();
-    
+
             datastore.put(root);
             LOG.info("Conta 'root' criada com sucesso.");
         } catch (DatastoreException e) {

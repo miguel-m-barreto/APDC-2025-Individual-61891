@@ -4,10 +4,11 @@ import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.HttpHeaders;
+import pt.unl.fct.apdc.assignment.util.AuthToken;
 
 import java.util.Optional;
 
-public class DatastoreLoginUtil {
+public class DatastoreLogin {
 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 
@@ -83,5 +84,6 @@ public class DatastoreLoginUtil {
 						.addAncestors(PathElement.of("User", username))
 						.setKind("UserLog")
 						.newKey());
-	}
+	}	
+	
 }

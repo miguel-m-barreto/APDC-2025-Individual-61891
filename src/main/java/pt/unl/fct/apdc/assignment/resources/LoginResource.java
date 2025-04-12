@@ -26,9 +26,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response.Status;
 import pt.unl.fct.apdc.assignment.util.AuthToken;
-import pt.unl.fct.apdc.assignment.util.LoginData;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreLoginUtil;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueryUtil;
+import pt.unl.fct.apdc.assignment.util.data.LoginData;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreLogin;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQuery;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
 
 
 @Path("/login")
@@ -65,11 +66,10 @@ public class LoginResource {
 		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.identifier);
 
 		// Tenta obter o utilizador por username
-		Optional<Entity> userOpt = DatastoreQueryUtil.getUserByUsername(data.identifier);
-
+		Optional<Entity> userOpt = DatastoreQuery.getUserByUsername(data.identifier);
 		// Se não encontrar, tenta por email
 		if (userOpt.isEmpty()) {
-			userOpt = DatastoreQueryUtil.getUserByEmail(data.identifier);
+			userOpt = DatastoreQuery.getUserByEmail(data.identifier);
 			if (userOpt.isEmpty()) {
 				LOG.warning(LOG_MESSAGE_UNKNOWN_USER + data.identifier);
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_USER_NOT_FOUND).build();
@@ -88,9 +88,9 @@ public class LoginResource {
 				
 				// Se o utilizador não existir, não faz nada
 				// Se o utilizador existir, atualiza o número de tentativas falhadas
-				Key statsKey = DatastoreLoginUtil.createStatsKey(username);
+				Key statsKey = DatastoreLogin.createStatsKey(username);
 				Entity currentStats = txn.get(statsKey);
-				Entity updatedStats = DatastoreLoginUtil.buildUserStatsOnFailure(currentStats, statsKey);
+				Entity updatedStats = DatastoreLogin.buildUserStatsOnFailure(currentStats, statsKey);
 	
 				txn.put(updatedStats);
 				txn.commit();
@@ -98,18 +98,21 @@ public class LoginResource {
 			}
 
 			// Login bem-sucedido
-			Key statsKey = DatastoreLoginUtil.createStatsKey(username);
-			Key logKey = DatastoreLoginUtil.createLogKey(username);
+			Key statsKey = DatastoreLogin.createStatsKey(username);
+			Key logKey = DatastoreLogin.createLogKey(username);
 	
 			Entity currentStats = txn.get(statsKey);
-			Entity updatedStats = DatastoreLoginUtil.buildUserStatsOnSuccess(currentStats, statsKey);
-			Entity userLog = DatastoreLoginUtil.buildUserLog(username, request, headers, logKey);
+			Entity updatedStats = DatastoreLogin.buildUserStatsOnSuccess(currentStats, statsKey);
+			Entity userLog = DatastoreLogin.buildUserLog(username, request, headers, logKey);
 	
 			txn.put(updatedStats, userLog);
 			txn.commit();
 	
 			String role = user.getString("user_role");
 			AuthToken token = new AuthToken(username, role);
+			Entity tokenEntity = DatastoreToken.createTokenEntity(token);
+			datastore.put(tokenEntity); // grava a sessão no datastore
+
 	
 			JsonObject responseJson = new JsonObject();
 			responseJson.addProperty("user", username);

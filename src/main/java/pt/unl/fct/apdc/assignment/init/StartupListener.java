@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
-import pt.unl.fct.apdc.assignment.util.DeployUtils;
 
 @WebListener
 public class StartupListener implements ServletContextListener {
@@ -14,8 +13,8 @@ public class StartupListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        LOG.info(">>> StartupListener: Initializing application...");
-        DeployUtils.createRootUser();
+        LOG.info("StartupListener: Initializing application...");
+        DeployStartup.createRootUser();
     }
 
     @Override

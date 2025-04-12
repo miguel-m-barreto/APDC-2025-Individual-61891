@@ -22,8 +22,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import pt.unl.fct.apdc.assignment.util.RegisterData;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreRegisterUtil;
+import pt.unl.fct.apdc.assignment.util.data.RegisterData;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreRegister;
 
 @Path("/register")
 public class RegisterResource {
@@ -58,7 +58,7 @@ public class RegisterResource {
 		if(!data.validRegistration())
 				return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();
 			
-		if(!DatastoreRegisterUtil.validateRegisterData(data)) 
+		if(!DatastoreRegister.validateRegisterData(data)) 
 			return Response.status(Status.BAD_REQUEST).entity("User already exists.").build();
 
 		try {
