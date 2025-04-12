@@ -19,7 +19,6 @@ public class RegisterData {
 	public String address;
 	public String employerNIF;	// NIF da entidade empregadora
 	public String accountState; // "ATIVADA" ou "DESATIVADA" ou "SUSPENSA"
-	public String photo;
 
 
 	private static final String PUBLIC = "público";
@@ -50,7 +49,6 @@ public class RegisterData {
 		this.job = job;
 		this.address = address;
 		this.employerNIF = employerNIF;
-		this.photo = photo;
 	}
 	
 	private String normalizeProfileType(String input) {
@@ -105,6 +103,5 @@ public class RegisterData {
 				(job == null || job.length() <= 32) &&
 				(address == null || address.length() <= 100) &&
 				(employer == null || employer.length() <= 32)&&
-				(photo == null || photo.matches("(?i)^https://.+\\.(jpg|jpeg|png|gif|tiff|webp|heif)$|^.+\\.(jpg|jpeg|png|gif|tiff|webp|heif)$"));
 	}
 }

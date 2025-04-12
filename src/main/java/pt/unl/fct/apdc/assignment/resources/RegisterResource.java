@@ -78,10 +78,6 @@ public class RegisterResource {
 					.entity("Email already in use.").build();
 			}
 
-			data.photo = MediaUtil.resolvePhotoUrlOrUpload( data.photo,
-															data.username,
-															LOG);
-
 			Entity user = Entity.newBuilder(userKey)
 			.set("user_name", data.name)
 			.set("user_pwd", DigestUtils.sha512Hex(data.password))
@@ -98,7 +94,7 @@ public class RegisterResource {
 			.set("user_job", data.job != null ? data.job : "")
 			.set("user_address", data.address != null ? data.address : "")
 			.set("user_employer_nif", data.employerNIF != null ? data.employerNIF : "")
-			.set("user_photo_url", data.photo != null ? data.photo : DEFAULT_USER_PHOTO)
+			.set("user_photo_url", DEFAULT_USER_PHOTO)
 			.build();
 
 			datastore.add(user);
