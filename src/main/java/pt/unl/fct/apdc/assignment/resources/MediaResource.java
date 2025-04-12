@@ -2,7 +2,9 @@ package pt.unl.fct.apdc.assignment.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 
+import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -71,6 +73,28 @@ public class MediaResource {
 		Storage storage = StorageOptions.getDefaultInstance().getService();
 		BlobId blobId = BlobId.of(bucket, object);
 		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
+		// The following is deprecated since it is better to upload directly to GCS from
+		// the client
+		try {
+			storage.create(blobInfo, request.getInputStream());
+			return Response.ok().build();
+		} catch (IOException e) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@POST
+	@Path("/upload/public/{bucket}/{object}")
+	public Response uploadPublicFile(@PathParam("bucket") String bucket, @PathParam("object") String object,
+			@HeaderParam("Content-Type") String contentType,
+			@Context HttpServletRequest request) {
+
+		// Upload to Google Cloud Storage (see Google's documentation)
+		Storage storage = StorageOptions.getDefaultInstance().getService();
+		BlobId blobId = BlobId.of(bucket, object);
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType)
+					.setAcl(Collections.singletonList(Acl.newBuilder(Acl.User.ofAllUsers(),Acl.Role.READER).build()))
+					.build();
 		// The following is deprecated since it is better to upload directly to GCS from
 		// the client
 		try {

@@ -1,36 +1,39 @@
-package pt.unl.fct.apdc.assignment.listeners;
+package pt.unl.fct.apdc.assignment.util;
 
-import com.google.cloud.datastore.*;
 import com.google.cloud.Timestamp;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
+import com.google.cloud.datastore.*;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.logging.Logger;
 
+public class DeployUtils {
 
-public class AppStartupListener implements ServletContextListener {
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
-    private static final Logger LOG = Logger.getLogger(AppStartupListener.class.getName());
+    private static final Logger LOG = Logger.getLogger(DeployUtils.class.getName());
 
     private static final String ROOT_USERNAME = "root";
-    private static final String ROOT_PASSWORD = "Admin123."; // Considere obter de uma variável de ambiente
+    private static final String ROOT_PASSWORD = "Admin123.";
     private static final String ROOT_EMAIL = "root@root.com";
-    private static final String ROOT_PHONE = "000000000"; // Não é necessário para o root
+    private static final String ROOT_PHONE = "000000000";
     private static final String ROOT_PROFILE = "privado";
     private static final String ROOT_ROLE = "ADMIN";
     private static final String ROOT_STATE = "ATIVO";
     private static final String ROOT_PHOTO = "https://storage.googleapis.com/shining-expanse-453014-c4.appspot.com/Admin_user.jpg";
 
-
-    @Override
-    public void contextInitialized(ServletContextEvent sce) {
-       
-        KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
-        Key rootKey = userKeyFactory.newKey(ROOT_USERNAME);
-
-        if (datastore.get(rootKey) == null) {
-            Entity rootUser = Entity.newBuilder(rootKey)
+    public static void createRootUser() {
+        LOG.info("Creating root user...");
+    
+        try {
+            KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
+            Key rootKey = userKeyFactory.newKey(ROOT_USERNAME);
+    
+            Entity existing = datastore.get(rootKey);
+            if (existing != null) {
+                LOG.info("Conta 'root' já existe.");
+                return;
+            }
+    
+            Entity root = Entity.newBuilder(rootKey)
                     .set("user_name", ROOT_USERNAME)
                     .set("user_pwd", DigestUtils.sha512Hex(ROOT_PASSWORD))
                     .set("user_email", ROOT_EMAIL)
@@ -41,16 +44,16 @@ public class AppStartupListener implements ServletContextListener {
                     .set("user_creation_time", Timestamp.now())
                     .set("user_photo", ROOT_PHOTO)
                     .build();
-
-            datastore.put(rootUser);
+    
+            datastore.put(root);
             LOG.info("Conta 'root' criada com sucesso.");
-        } else {
-            LOG.info("Conta 'root' já existe.");
+        } catch (DatastoreException e) {
+            LOG.severe("Erro ao criar root user: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.severe("Erro inesperado ao criar root user: " + e.getMessage());
+            e.printStackTrace();
         }
     }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        // Não há necessidade de fazer nada específico ao destruir o contexto ou há?
-    }
+    
 }
