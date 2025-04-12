@@ -1,5 +1,6 @@
 package pt.unl.fct.apdc.assignment.util;
 
+import static pt.unl.fct.apdc.assignment.util.StringUtil.isNonEmpty;
 
 public class RegisterData {
 	
@@ -20,10 +21,6 @@ public class RegisterData {
 	public String employerNIF;	// NIF da entidade empregadora
 	public String accountState; // "ATIVADA" ou "DESATIVADA" ou "SUSPENSA"
 
-
-	private static final String PUBLIC = "público";
-	private static final String PRIVATE = "privado";
-
 	public RegisterData() {
 		
 	}
@@ -38,8 +35,8 @@ public class RegisterData {
 		this.name = name;
 		this.phone = phone;
 		// Non case sensitive mandatory parameters
-		this.email = email != null ? email.toLowerCase() : null; // Lowercase email
-		this.profileType = normalizeProfileType(profileType); // Uppercase profileType with normalizeProfileType method
+		this.email = email; // Lowercase email
+		this.profileType = profileType; // Lowercase profileType with normalizeProfileType method
 		
 		
 		// OPTIONAL DATA
@@ -50,30 +47,16 @@ public class RegisterData {
 		this.address = address;
 		this.employerNIF = employerNIF;
 	}
-	
-	private String normalizeProfileType(String input) {
-		if (!nonEmptyOrBlankField(input)) return null;
-		
-		input = input.trim();
-		
-		if (input.matches("(?i)publico|público|public")) return PUBLIC;
-		if (input.matches("(?i)private|privado")) return PRIVATE;
-		return null;
-	}
-	
-	private boolean nonEmptyOrBlankField(String field) {
-		return field != null && !field.isBlank();
-	}
-	
+
 	// Método para validar os dados de registo
 	public boolean validRegistration() {
 		 	
-		return nonEmptyOrBlankField(username) &&
-				nonEmptyOrBlankField(password) &&
-				nonEmptyOrBlankField(email) &&
-				nonEmptyOrBlankField(name) &&
-				nonEmptyOrBlankField(phone) &&
-				nonEmptyOrBlankField(profileType) &&
+		return isNonEmpty(username) &&
+				isNonEmpty(password) &&
+				isNonEmpty(email) &&
+				isNonEmpty(name) &&
+				isNonEmpty(phone) &&
+				isNonEmpty(profileType) &&
 
 				//	A pass tem de conter uma combinação de caracteres alfabéticos (maiúsculas e minúsculas), 
 				//	numéricos e sinais de pontuação 
@@ -92,8 +75,7 @@ public class RegisterData {
 
 				// Condições para validar o profileType
 				// O profileType deve ser "público" ou "privado"
-				(profileType.equals(PUBLIC) ||
-				profileType.equals(PRIVATE)) &&
+				profileType.matches("(?i)public|publico|público|privado|private") &&
 				
 				// Codiçoes para validar os campos opcionais
 	

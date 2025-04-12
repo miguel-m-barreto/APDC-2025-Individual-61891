@@ -44,5 +44,4 @@ public class AuthToken {
 			throw new RuntimeException("Failed to generate token verifier", e);
 		}
 	}
-	
 }
