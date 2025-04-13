@@ -29,7 +29,7 @@ public class ListUsersResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response listUsers(ListUsersData data) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getToken(data.identifier);
+        Optional<Entity> tokenOpt = DatastoreQueries.getToken(data.requesterID);
         if (tokenOpt.isEmpty()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
         }

@@ -2,7 +2,7 @@ package pt.unl.fct.apdc.assignment.util.data;
 
 public class LoginData {
 	
-	public String identifier; // username or email
+	public String requesterID; // username or email
 	public String password;
 	
 	/* Construtor vazio 
@@ -19,8 +19,8 @@ public class LoginData {
 		
 	}
 	
-	public LoginData(String identifier, String password) {
-		this.identifier = identifier;
+	public LoginData(String requesterID, String password) {
+		this.requesterID = requesterID;
 		this.password = password;
 	}
 	

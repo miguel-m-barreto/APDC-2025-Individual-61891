@@ -15,8 +15,8 @@ public class DatastoreChangeAttributes {
     public static Response processAttributeUpdate(ChangeAttributesData data, String requesterUsername, String requesterRole) {
         if (data.targetUsername == null || data.targetUsername.isBlank()) {
             data.targetUsername = requesterUsername;
-            
         }
+
         Optional<Entity> targetOpt = DatastoreQueries.getUserByUsernameOrEmail(data.targetUsername);
         if (targetOpt.isEmpty()) {
             return Response.status(Status.NOT_FOUND).entity("Utilizador a alterar não existe.").build();
@@ -127,9 +127,5 @@ public class DatastoreChangeAttributes {
     
     private static String getOrDefault(Entity entity, String field) {
         return entity.contains(field) ? entity.getString(field) : "NOT DEFINED";
-    }
-
-    private static String hashPassword(String raw) {
-        return org.apache.commons.codec.digest.DigestUtils.sha512Hex(raw);
     }
 }

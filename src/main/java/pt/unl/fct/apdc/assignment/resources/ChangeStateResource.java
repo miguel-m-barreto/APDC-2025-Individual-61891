@@ -7,7 +7,6 @@ import com.google.cloud.datastore.Entity;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
-import com.google.gson.Gson;
 import pt.unl.fct.apdc.assignment.util.data.ChangeAccountStateData;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
@@ -18,7 +17,6 @@ import pt.unl.fct.apdc.assignment.util.datastore.DatastoreChangeState;
 public class ChangeStateResource {
 
     private static final Logger LOG = Logger.getLogger(ChangeStateResource.class.getName());
-    private static final Gson g = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -33,6 +31,7 @@ public class ChangeStateResource {
         Entity tokenEntity = tokenOpt.get();
 
         String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();
+        LOG.info("Requester role: " + requesterRole + " | Target user: " + data.targetUser + " | New state: " + data.newState);
         return DatastoreChangeState.processStateChange(requesterRole, data.targetUser, data.newState);
     }
 }

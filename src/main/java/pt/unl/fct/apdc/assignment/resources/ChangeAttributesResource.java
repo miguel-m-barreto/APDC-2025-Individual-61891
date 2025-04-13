@@ -1,7 +1,6 @@
 package pt.unl.fct.apdc.assignment.resources;
 
 import com.google.cloud.datastore.Entity;
-import com.google.gson.Gson;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -18,8 +17,6 @@ import java.util.Optional;
 @Path("/changeattributes")
 @Produces(MediaType.APPLICATION_JSON)
 public class ChangeAttributesResource {
-
-    private static final Gson g = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

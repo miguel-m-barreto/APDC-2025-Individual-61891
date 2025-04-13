@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.google.cloud.datastore.Entity;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-import com.google.gson.Gson;
 
 import pt.unl.fct.apdc.assignment.util.datastore.*;
 import pt.unl.fct.apdc.assignment.util.data.RemoveAccountData;
@@ -16,7 +15,6 @@ import pt.unl.fct.apdc.assignment.util.data.RemoveAccountData;
 public class RemoveAccountResource {
 
     private static final Logger LOG = Logger.getLogger(RemoveAccountData.class.getName());
-    private static final Gson g = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -30,6 +28,7 @@ public class RemoveAccountResource {
         Entity tokenEntity = tokenOpt.get();
 
         String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();
+        LOG.info("Requester role: " + requesterRole + " | Target user: " + data.targetUser + " | Remove account");
         return DatastoreRemoveAccount.processAccountRemoval(requesterRole, data.targetUser);
     }
 }

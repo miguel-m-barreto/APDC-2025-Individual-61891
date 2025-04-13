@@ -1,11 +1,11 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
 public class ListUsersData {
-    public String identifier;
+    public String requesterID;
 
     public ListUsersData() {}
 
-    public ListUsersData(String identifier) {
-        this.identifier = identifier;
+    public ListUsersData(String requesterID) {
+        this.requesterID = requesterID;
     }
 }

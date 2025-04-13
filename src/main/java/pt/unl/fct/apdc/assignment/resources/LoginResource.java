@@ -63,15 +63,15 @@ public class LoginResource {
 	public Response doLogin(LoginData data,
 							@Context HttpServletRequest request,
 							@Context HttpHeaders headers) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.identifier);
+		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.requesterID);
 
 		// Tenta obter o utilizador por username
-		Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
+		Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.requesterID);
 		// Se não encontrar, tenta por email
 		if (userOpt.isEmpty()) {
-			userOpt = DatastoreQueries.getUserByEmail(data.identifier);
+			userOpt = DatastoreQueries.getUserByEmail(data.requesterID);
 			if (userOpt.isEmpty()) {
-				LOG.warning(LOG_MESSAGE_UNKNOWN_USER + data.identifier);
+				LOG.warning(LOG_MESSAGE_UNKNOWN_USER + data.requesterID);
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_USER_NOT_FOUND).build();
 			}
 		}
@@ -99,7 +99,7 @@ public class LoginResource {
 			// Verifica a password
 			String hashedPWD = user.getString(USER_PWD);
 			if (!hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.identifier);
+				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.requesterID);
 				
 				// Se o utilizador não existir, não faz nada
 				// Se o utilizador existir, atualiza o número de tentativas falhadas
@@ -111,12 +111,6 @@ public class LoginResource {
 				txn.commit();
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_INVALID_CREDENTIALS).build();
 			}
-
-			//	Limpar sessões antes de criar a nova
-			LOG.info("A limpar sessões expiradas para o utilizador: " + username);
-			//int deleted = DatastoreLogin.deleteExpiredSessions(username);
-			int deleted = DatastoreLogin.KeepLatestSessionOnly(username);
-			LOG.info("Deleted " + deleted + " expired sessions for user: " + username);
 
 			// Login bem-sucedido
 			Key statsKey = DatastoreLogin.createStatsKey(username);
@@ -135,7 +129,12 @@ public class LoginResource {
 			datastore.put(tokenEntity); // grava a sessão no datastore
 			LOG.info("Token gravado com sucesso para o utilizador: " + username);
 
-	
+			//	Limpar sessões antigas (novo login)
+			LOG.info("A limpar sessões expiradas para o utilizador: " + username);
+			//int deleted = DatastoreLogin.deleteExpiredSessions(username);
+			int deleted = DatastoreLogin.KeepLatestSessionOnly(username);
+			LOG.info("Deleted " + deleted + " expired sessions for user: " + username);
+
 			JsonObject responseJson = new JsonObject();
 			responseJson.addProperty("user", username);
 			responseJson.addProperty("role", role);

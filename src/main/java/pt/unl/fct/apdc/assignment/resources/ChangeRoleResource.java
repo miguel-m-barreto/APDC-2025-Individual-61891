@@ -28,6 +28,7 @@ public class ChangeRoleResource {
         }
 
         String requesterRole = DatastoreToken.getRole(tokenOpt.get()).toUpperCase();
+        LOG.info("Requester role: " + requesterRole + " | Target user: " + data.targetUser + " | New role: " + data.newRole);
         return DatastoreChangeRole.processRoleChange(requesterRole, data.targetUser, data.newRole);
     }
 }

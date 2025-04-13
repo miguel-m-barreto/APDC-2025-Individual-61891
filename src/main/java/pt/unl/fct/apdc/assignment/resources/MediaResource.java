@@ -65,6 +65,7 @@ public class MediaResource {
 				.build();
 	}
 
+	@SuppressWarnings("deprecation")
 	@POST
 	@Path("/upload/{bucket}/{object}")
 	public Response uploadFile(@PathParam("bucket") String bucket, @PathParam("object") String object,
@@ -85,6 +86,7 @@ public class MediaResource {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@POST
 	@Path("/upload/public/{bucket}/{object}")
 	public Response uploadPublicFile(@PathParam("bucket") String bucket, @PathParam("object") String object,
@@ -107,6 +109,7 @@ public class MediaResource {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@POST
 	@Path("/upload/public/auto/{bucket}")
 	@Consumes(MediaType.APPLICATION_OCTET_STREAM)

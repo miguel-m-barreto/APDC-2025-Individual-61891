@@ -5,7 +5,6 @@ import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.OrderBy;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 
-import jakarta.ws.rs.core.Response;
 import pt.unl.fct.apdc.assignment.util.AuthToken;
 
 import com.google.cloud.Timestamp;
@@ -30,7 +29,7 @@ public class DatastoreQueries {
 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 	private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
-	private static final KeyFactory sessionKeyFactory = datastore.newKeyFactory().setKind("Session");
+	//private static final KeyFactory sessionKeyFactory = datastore.newKeyFactory().setKind("Session");
 
 	private static final String EMAIL_FIELD = "user_email";
 	private static final String PHONE_FIELD = "user_phone";
@@ -110,6 +109,15 @@ public class DatastoreQueries {
 		}
 		
 		return getUserByEmail(identifier); // pode ser presente ou vazio
+	}
+
+	public Optional<Entity> getUserbyToken (String token) {
+		Optional<Entity> tokenEntity = getToken(token);
+		if (tokenEntity.isPresent()) {
+			String username = DatastoreToken.getUsername(tokenEntity.get());
+			return getUserByUsername(username);
+		}
+		return Optional.empty(); // Return empty if the token is not valid or user not found
 	}
 	
 

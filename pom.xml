@@ -117,10 +117,12 @@
 
 				<!-- COMMENT THIS WHEN SENDING TO GIT -->
 				<!-- created so i can access outside the vm -->
+				<!--
 				<configuration>
 					<host>0.0.0.0</host>
 					<port>8080</port>
 				</configuration>
+				-->
 				<!-- -->
 			</plugin>
 		</plugins>

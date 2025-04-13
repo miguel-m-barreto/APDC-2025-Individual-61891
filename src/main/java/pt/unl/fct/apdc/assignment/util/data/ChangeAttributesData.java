@@ -1,7 +1,5 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
-import static pt.unl.fct.apdc.assignment.util.StringUtil.isNonEmpty;
-
 public class ChangeAttributesData {
     public String requesterID;    // TokenID, username ou email de quem está a pedir
     public String targetUsername; // Utilizador que será alterado (pode ser o próprio)

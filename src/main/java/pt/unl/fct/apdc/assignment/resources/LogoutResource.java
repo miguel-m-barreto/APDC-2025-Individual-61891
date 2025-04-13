@@ -21,7 +21,7 @@ public class LogoutResource {
         }
 
 
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByTokenIDorVerifier(data.tokenString);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByTokenIDorVerifier(data.token);
         if (tokenOpt.isEmpty()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou já terminada.").build();
         }
