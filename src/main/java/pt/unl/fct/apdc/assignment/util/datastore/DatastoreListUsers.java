@@ -75,7 +75,7 @@ public class DatastoreListUsers {
     
         try {
             String val = e.getString(field);
-            if (val == null || val.trim().isEmpty() || val.trim().equals("—")) {
+            if (val == null || val.trim().isEmpty() || val.trim().equals("NOT DEFINED")) {
                 return "NOT DEFINED";
             }
             return val;

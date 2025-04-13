@@ -21,13 +21,36 @@ public class WorkSheetData {
     public String workState; // "NÃO INICIADO", "EM CURSO", "CONCLUÍDO"
     public String observations;
 
+    private static final String DATE_REGEX =
+            "^\\d{2}[-/]((0[1-9])|(1[0-2])|(?i)(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))[-/]\\d{4}$";
+    private static final String ISO_DATE_REGEX = "^\\d{4}-\\d{2}-\\d{2}$"; // opcional
+
     public boolean isValidForBackofficeCreate() {
-        return reference != null && description != null && targetType != null &&
-               (adjudicationStatus != null && (adjudicationStatus.equalsIgnoreCase("ADJUDICADO") ||
-                                               adjudicationStatus.equalsIgnoreCase("NÃO ADJUDICADO")));
+        if (isBlank(reference) || isBlank(description) || isBlank(targetType) || isBlank(adjudicationStatus)) {
+            return false;
+        }
+
+        if (adjudicationStatus.equalsIgnoreCase("ADJUDICADO")) {
+            return isValidDate(adjudicationDate) &&
+                   isValidDate(startDate) &&
+                   isValidDate(endDate) &&
+                   !isBlank(partnerAccount) &&
+                   !isBlank(companyName) &&
+                   companyNIF != null && companyNIF.matches("\\d{9}");
+        }
+
+        return true;
     }
 
     public boolean isValidForPartnerUpdate() {
-        return reference != null && workState != null;
+        return !isBlank(reference) && !isBlank(workState);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private boolean isValidDate(String date) {
+        return date != null && (date.matches(DATE_REGEX) || date.matches(ISO_DATE_REGEX));
     }
 }

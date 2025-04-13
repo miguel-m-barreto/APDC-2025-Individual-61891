@@ -1,8 +1,30 @@
 package pt.unl.fct.apdc.assignment.resources;
 
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreOptions;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.KeyFactory;
+
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import pt.unl.fct.apdc.assignment.util.data.WorkSheetData;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
+
+import java.util.Optional;
+
+
 @Path("/worksheet")
 @Produces(MediaType.APPLICATION_JSON)
 public class WorkSheetResource {
+
+    private static final String EMPTY_STRING = "NOT DEFINED";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -38,12 +60,12 @@ public class WorkSheetResource {
                     .set("adjudicationStatus", data.adjudicationStatus);
 
             if ("ADJUDICADO".equalsIgnoreCase(data.adjudicationStatus)) {
-                builder.set("adjudicationDate", data.adjudicationDate == null ? "NOT DEFINED" : data.adjudicationDate)
-                       .set("startDate", data.startDate == null ? "NOT DEFINED" : data.startDate)
-                       .set("endDate", data.endDate == null ? "NOT DEFINED" : data.endDate)
-                       .set("partnerAccount", data.partnerAccount == null ? "NOT DEFINED" : data.partnerAccount)
-                       .set("companyName", data.companyName == null ? "NOT DEFINED" : data.companyName)
-                       .set("companyNIF", data.companyNIF == null ? "NOT DEFINED" : data.companyNIF);
+                builder.set("adjudicationDate", data.adjudicationDate == null ? EMPTY_STRING : data.adjudicationDate)
+                       .set("startDate", data.startDate == null ? EMPTY_STRING : data.startDate)
+                       .set("endDate", data.endDate == null ? EMPTY_STRING : data.endDate)
+                       .set("partnerAccount", data.partnerAccount == null ? EMPTY_STRING : data.partnerAccount)
+                       .set("companyName", data.companyName == null ? EMPTY_STRING : data.companyName)
+                       .set("companyNIF", data.companyNIF == null ? EMPTY_STRING : data.companyNIF);
             }
 
             ds.put(builder.build());
