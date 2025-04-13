@@ -9,7 +9,7 @@ public class Permission {
 
         switch (requesterRole) {
             case "ADMIN":
-                return true; // ADMIN pode tudo
+                return true;
 
             case "BACKOFFICE":
                 return (isEndUserOrPartner(currentRole) && isEndUserOrPartner(newRole));

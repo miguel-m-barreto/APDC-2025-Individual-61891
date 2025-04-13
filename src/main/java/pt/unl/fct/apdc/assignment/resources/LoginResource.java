@@ -97,6 +97,11 @@ public class LoginResource {
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_INVALID_CREDENTIALS).build();
 			}
 
+			//	Limpar sessões expiradas antes de criar a nova
+			LOG.info("A limpar sessões expiradas para o utilizador: " + username);
+			DatastoreLogin.deleteExpiredSessions(username);
+			LOG.info("Sessões expiradas limpas com sucesso para o utilizador: " + username);
+
 			// Login bem-sucedido
 			Key statsKey = DatastoreLogin.createStatsKey(username);
 			Key logKey = DatastoreLogin.createLogKey(username);
@@ -112,6 +117,7 @@ public class LoginResource {
 			AuthToken token = new AuthToken(username, role);
 			Entity tokenEntity = DatastoreToken.createTokenEntity(token);
 			datastore.put(tokenEntity); // grava a sessão no datastore
+			LOG.info("Token gravado com sucesso para o utilizador: " + username);
 
 	
 			JsonObject responseJson = new JsonObject();

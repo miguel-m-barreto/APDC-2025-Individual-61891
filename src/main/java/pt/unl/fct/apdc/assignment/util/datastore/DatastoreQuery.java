@@ -5,6 +5,8 @@ import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.OrderBy;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 
+import pt.unl.fct.apdc.assignment.util.AuthToken;
+
 import com.google.cloud.Timestamp;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ public class DatastoreQuery {
 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 	private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
+	private static final KeyFactory sessionKeyFactory = datastore.newKeyFactory().setKind("Session");
 
 	private static final String EMAIL_FIELD = "user_email";
 	private static final String PHONE_FIELD = "user_phone";
@@ -119,11 +122,18 @@ public class DatastoreQuery {
 		return getUserByField(NIF_FIELD, nif);
 	}
 
+	// TOKENS AND SESSIONS
+
 	public static Optional<Entity> getTokenEntityByID(String tokenID) {
-		Key key = datastore.newKeyFactory().setKind("Session").newKey(tokenID);
-		Entity token = datastore.get(key);
-		return Optional.ofNullable(token);
-	}
+		String verifier = AuthToken.getVerifier(tokenID);
+		Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("Session")
+            .setFilter(StructuredQuery.PropertyFilter.eq("session_verification", verifier))
+            .build();
+
+    QueryResults<Entity> results = datastore.run(query);
+    return results.hasNext() ? Optional.of(results.next()) : Optional.empty();
+	}	
 
 	public static List<Entity> getTokensByUsername(String username) {
 		Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
@@ -137,8 +147,53 @@ public class DatastoreQuery {
 		datastore.run(query).forEachRemaining(tokens::add);
 		return tokens;
 	}
-	
 
+	public static List<Entity> getActiveSessions(String username) {
+        Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
+
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("Session")
+            .setFilter(PropertyFilter.hasAncestor(userKey))
+            .build();
+
+        List<Entity> activeSessions = new ArrayList<>();
+        QueryResults<Entity> results = datastore.run(query);
+
+        while (results.hasNext()) {
+            Entity session = results.next();
+
+            if (DatastoreToken.isTokenValid(session))
+                activeSessions.add(session); // ativa - adiciona à lista
+            else 
+                datastore.delete(session.getKey()); // expirada - remove do datastore
+        }
+
+        return activeSessions;
+    }
+
+	public static List<Entity> getExpiredSessions(String username) {
+		Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
+
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("Session")
+            .setFilter(PropertyFilter.hasAncestor(userKey))
+            .build();
+
+        List<Entity> expiredSessions = new ArrayList<>();
+        QueryResults<Entity> results = datastore.run(query);
+
+        while (results.hasNext()) {
+            Entity session = results.next();
+
+            if (!DatastoreToken.isTokenValid(session))
+				expiredSessions.add(session); // ativa - adiciona à lista
+            else 
+                datastore.delete(session.getKey()); // expirada - remove do datastore
+        }
+
+        return expiredSessions;
+	}	
+	
 	public static Datastore getDatastore() {
 		return datastore;
 	}

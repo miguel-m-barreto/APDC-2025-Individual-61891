@@ -30,23 +30,24 @@ public class DeployStartup {
             Entity existing = datastore.get(rootKey);
             if (existing != null) {
                 LOG.info("Conta 'root' já existe.");
-                return;
-            }
-    
-            Entity root = Entity.newBuilder(rootKey)
-                    .set("user_name", ROOT_USERNAME)
-                    .set("user_pwd", DigestUtils.sha512Hex(ROOT_PASSWORD))
-                    .set("user_email", ROOT_EMAIL)
-                    .set("user_phone", ROOT_PHONE)
-                    .set("user_profile", ROOT_PROFILE)
-                    .set("user_role", ROOT_ROLE)
-                    .set("user_account_state", ROOT_STATE)
-                    .set("user_creation_time", Timestamp.now())
-                    .set("user_photo_url", ROOT_PHOTO)
-                    .build();
+                
+            } else {
+                Entity root = Entity.newBuilder(rootKey)
+                        .set("user_name", ROOT_USERNAME)
+                        .set("user_pwd", DigestUtils.sha512Hex(ROOT_PASSWORD))
+                        .set("user_email", ROOT_EMAIL)
+                        .set("user_phone", ROOT_PHONE)
+                        .set("user_profile", ROOT_PROFILE)
+                        .set("user_role", ROOT_ROLE)
+                        .set("user_account_state", ROOT_STATE)
+                        .set("user_creation_time", Timestamp.now())
+                        .set("user_photo_url", ROOT_PHOTO)
+                        .build();
 
-            datastore.put(root);
-            LOG.info("Conta 'root' criada com sucesso.");
+                datastore.put(root);
+                LOG.info("Conta 'root' criada com sucesso.");
+            }
+        
         } catch (DatastoreException e) {
             LOG.severe("Erro ao criar root user: " + e.getMessage());
             e.printStackTrace();

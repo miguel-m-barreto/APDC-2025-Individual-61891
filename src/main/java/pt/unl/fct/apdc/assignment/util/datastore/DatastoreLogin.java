@@ -1,11 +1,10 @@
 package pt.unl.fct.apdc.assignment.util.datastore;
 
-import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.HttpHeaders;
-import pt.unl.fct.apdc.assignment.util.AuthToken;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DatastoreLogin {
@@ -25,7 +24,7 @@ public class DatastoreLogin {
 								.orElse(StringValue.newBuilder("").setExcludeFromIndexes(true).build()))
 				.set("user_login_city", headers.getHeaderString("X-AppEngine-City"))
 				.set("user_login_country", headers.getHeaderString("X-AppEngine-Country"))
-				.set("user_login_time", Timestamp.now())
+				.set("user_login_time", System.currentTimeMillis())
 				.build();
 	}
 
@@ -34,16 +33,17 @@ public class DatastoreLogin {
 	 */
 	public static Entity buildUserStatsOnSuccess(Entity currentStats, Key statsKey) {
 		if (currentStats == null) {
+			long currentTime = System.currentTimeMillis();
 			return Entity.newBuilder(statsKey)
 					.set("user_stats_logins", 1L)
 					.set("user_stats_failed", 0L)
-					.set("user_first_login", Timestamp.now())
-					.set("user_last_login", Timestamp.now())
+					.set("user_first_login", currentTime)
+					.set("user_last_login", currentTime)
 					.build();
 		}
 		return Entity.newBuilder(statsKey)
 				.set("user_stats_logins", currentStats.getLong("user_stats_logins") + 1)
-				.set("user_last_login", Timestamp.now())
+				.set("user_last_login", System.currentTimeMillis())
 				.build();
 	}
 
@@ -55,13 +55,13 @@ public class DatastoreLogin {
 			return Entity.newBuilder(statsKey)
 					.set("user_stats_logins", 0L)
 					.set("user_stats_failed", 1L)
-					.set("user_first_login", Timestamp.now())
-					.set("user_last_login", Timestamp.now())
+					.set("user_first_login", System.currentTimeMillis())
+					.set("user_last_login", System.currentTimeMillis())
 					.build();
 		}
 		return Entity.newBuilder(statsKey)
 				.set("user_stats_failed", currentStats.getLong("user_stats_failed") + 1)
-				.set("user_last_attempt", Timestamp.now())
+				.set("user_last_attempt", System.currentTimeMillis())
 				.build();
 	}
 
@@ -85,5 +85,12 @@ public class DatastoreLogin {
 						.setKind("UserLog")
 						.newKey());
 	}	
+
+	public static void deleteExpiredSessions(String username) {
+		List<Entity> expiredSessions = DatastoreQuery.getExpiredSessions(username);
+		for (Entity expired : expiredSessions) {
+			datastore.delete(expired.getKey());
+		}
+	}
 	
 }
