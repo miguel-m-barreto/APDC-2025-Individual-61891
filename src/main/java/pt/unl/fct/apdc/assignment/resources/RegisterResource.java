@@ -81,7 +81,7 @@ public class RegisterResource {
 			.set("user_job", data.job != null ? data.job : EMPTY_STRING)
 			.set("user_address", data.address != null ? data.address : EMPTY_STRING)
 			.set("user_employer_nif", data.employerNIF != null ? data.employerNIF : EMPTY_STRING)
-			.set("user_photo_url", DEFAULT_USER_PHOTO)
+			.set("user_photo_url", data.photoURL != null ? data.photoURL : DEFAULT_USER_PHOTO)
 			.build();
 
 			datastore.add(user);

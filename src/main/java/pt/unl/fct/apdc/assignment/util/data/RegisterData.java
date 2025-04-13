@@ -20,6 +20,7 @@ public class RegisterData {
 	public String address;
 	public String employerNIF;	// NIF da entidade empregadora
 	public String accountState; // "ATIVADA" ou "DESATIVADA" ou "SUSPENSA"
+	public String photoURL; // URL da foto do utilizador
 
 	public RegisterData() {
 		
@@ -39,6 +40,7 @@ public class RegisterData {
 		this.profileType = profileType; // Lowercase profileType with normalizeProfileType method
 		
 		
+		
 		// OPTIONAL DATA
 		this.cc = cc;
 		this.nif = nif;
@@ -46,6 +48,7 @@ public class RegisterData {
 		this.job = job;
 		this.address = address;
 		this.employerNIF = employerNIF;
+		this.photoURL = photo;
 	}
 
 	// Método para validar os dados de registo
