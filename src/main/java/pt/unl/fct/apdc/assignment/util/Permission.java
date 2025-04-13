@@ -38,5 +38,18 @@ public class Permission {
     
         return false;
     }
+
+    public static boolean canRemoveAccount(String requesterRole, String targetRole) {
+        requesterRole = requesterRole.toUpperCase();
+        targetRole = targetRole.toUpperCase();
+    
+        if (requesterRole.equals("ADMIN")) return true;
+    
+        if (requesterRole.equals("BACKOFFICE")) {
+            return targetRole.equals("ENDUSER") || targetRole.equals("PARTNER");
+        }
+    
+        return false;
+    }    
     
 }

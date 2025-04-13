@@ -25,7 +25,7 @@ public class DatastoreChangeState {
 
         Entity target = targetOpt.get();
         String currentState = target.getString("user_state").toUpperCase();
-        newState = newState.toUpperCase();
+        newState = newState.trim().toUpperCase();
 
         if (newState.equals(currentState)) {
             return Response.status(Status.BAD_REQUEST).entity("Estado não alterado.\nO estado atual é o mesmo que o novo estado.").build();
@@ -44,6 +44,10 @@ public class DatastoreChangeState {
                 .build();
 
         datastore.update(updatedUser);
+
+        if (newState.equals("SUSPENSA") || newState.equals("DESATIVADA")) {
+            DatastoreToken.deleteAllSessions(target.getKey().getName());
+        }
 
         JsonObject result = new JsonObject();
         result.addProperty("message", "Estado de conta de " + target.getKey().getName() + " alterado para " + newState);
