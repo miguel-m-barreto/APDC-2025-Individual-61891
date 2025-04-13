@@ -10,8 +10,10 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.gson.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
@@ -104,4 +106,39 @@ public class MediaResource {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+
+	@POST
+	@Path("/upload/public/auto/{bucket}")
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response uploadWithAutoName(@PathParam("bucket") String bucket,
+									@HeaderParam("Content-Type") String contentType,
+									@Context HttpServletRequest request) {
+		Storage storage = StorageOptions.getDefaultInstance().getService();
+
+		String objectName = "userphoto-" + java.util.UUID.randomUUID();  // auto filename
+		BlobId blobId = BlobId.of(bucket, objectName);
+
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+				.setContentType(contentType)
+				.setAcl(Collections.singletonList(
+						Acl.newBuilder(Acl.User.ofAllUsers(), Acl.Role.READER).build()))
+				.build();
+
+		try {
+			storage.create(blobInfo, request.getInputStream());
+
+			String publicUrl = "https://storage.googleapis.com/" + bucket + "/" + objectName;
+			JsonObject response = new JsonObject();
+			response.addProperty("url", publicUrl);
+			response.addProperty("object", objectName);
+
+			return Response.ok(response.toString()).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+						.entity("Erro ao fazer upload.").build();
+		}
+	}
+
 }

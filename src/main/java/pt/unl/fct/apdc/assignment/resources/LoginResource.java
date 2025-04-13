@@ -79,6 +79,23 @@ public class LoginResource {
 		Entity user = userOpt.get();
 		String username = user.getKey().getName(); // username verdadeiro
 
+		// Verifica o estado da conta antes de continuar
+		String state = user.getString("user_account_state").toUpperCase();
+
+		if (state.equals("SUSPENSA")) {
+			return Response.status(Status.FORBIDDEN).entity("Conta suspensa. Contacte o suporte.").build();
+		}
+
+		if (state.equals("DESATIVADA")) {
+			// Reativar automaticamente
+			Entity updatedUser = Entity.newBuilder(user)
+					.set("user_account_state", "ATIVADA")
+					.build();
+			datastore.update(updatedUser);
+			LOG.info("Conta " + username + " reativada automaticamente após login.");
+		}
+
+
 		Transaction txn = datastore.newTransaction();
 		try {
 			// Verifica a password

@@ -51,5 +51,34 @@ public class Permission {
     
         return false;
     }    
+
+    public static boolean canChangeAttributes(String requesterRole, String requesterUsername, String targetUsername,
+                                              String targetRole, boolean targetIsActivated,
+                                              boolean isTryingToChangeControlFields, boolean isTryingToChangeEmailOrUsernameOrName) {
+
+        requesterRole = requesterRole.toUpperCase();
+        targetRole = targetRole.toUpperCase();
+
+        // ADMIN pode tudo
+        if (requesterRole.equals("ADMIN")) {
+            return true;
+        }
+
+        // BACKOFFICE pode mudar atributos de ENDUSER ou PARTNER (se ativado), exceto username/email
+        if (requesterRole.equals("BACKOFFICE")) {
+            if (!targetIsActivated) return false;
+            if (!(targetRole.equals("ENDUSER") || targetRole.equals("PARTNER"))) return false;
+            return !isTryingToChangeEmailOrUsernameOrName;
+        }
+
+        // ENDUSER pode modificar só a própria conta
+        if (requesterRole.equals("ENDUSER")) {
+            if (!requesterUsername.equals(targetUsername)) return false;
+            // Não pode alterar username/email/nome nem os de controlo (role/state)
+            return !isTryingToChangeControlFields && !isTryingToChangeEmailOrUsernameOrName;
+        }
+
+        return false;
+    }
     
 }

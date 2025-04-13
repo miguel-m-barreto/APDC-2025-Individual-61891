@@ -60,16 +60,27 @@ public class DatastoreListUsers {
             obj.addProperty("employer", get(user, "user_employer"));
             obj.addProperty("job", get(user, "user_job"));
             obj.addProperty("address", get(user, "user_address"));
-            obj.addProperty("employer_nif", get(user, "user_employer_nif"));
+            obj.addProperty("employer nif", get(user, "user_employer_nif"));
+            obj.addProperty("creation time", get(user, "user_creation_time"));
+            obj.addProperty("photo", get(user, "user_photo_url"));
         }
 
         return obj;
     }
 
     private static String get(Entity e, String field) {
-        if (e.getString(field) == null || e.getString(field).isEmpty() || e.getString(field).equals("—"))
+        if (!e.contains(field)) {
             return "NOT DEFINED";
-
-        return e.getString(field);
+        }
+    
+        try {
+            String val = e.getString(field);
+            if (val == null || val.trim().isEmpty() || val.trim().equals("—")) {
+                return "NOT DEFINED";
+            }
+            return val;
+        } catch (Exception ex) {
+            return "NOT DEFINED";
+        }
     }
 }

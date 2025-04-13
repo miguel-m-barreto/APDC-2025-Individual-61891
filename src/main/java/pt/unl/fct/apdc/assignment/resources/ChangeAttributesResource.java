@@ -2,42 +2,37 @@ package pt.unl.fct.apdc.assignment.resources;
 
 import com.google.cloud.datastore.Entity;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import pt.unl.fct.apdc.assignment.util.data.ListUsersData;
+import pt.unl.fct.apdc.assignment.util.data.ChangeAttributesData;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreListUsers;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreChangeAttributes;
 
 import java.util.Optional;
 
-
-@Path("/listusers")
+@Path("/changeattrs")
 @Produces(MediaType.APPLICATION_JSON)
-public class ListUsersResource {
+public class ChangeAttributesResource {
 
     private static final Gson g = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response listUsers(ListUsersData data) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.identifier);
+    public Response changeAttributes(ChangeAttributesData data) {
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.requesterID);
         Entity tokenEntity;
 
         if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
             tokenEntity = tokenOpt.get();
         } else {
-            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
+            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.requesterID);
             if (userOpt.isEmpty()) {
-                userOpt = DatastoreQueries.getUserByEmail(data.identifier);
+                userOpt = DatastoreQueries.getUserByEmail(data.requesterID);
                 if (userOpt.isEmpty()) {
                     return Response.status(Response.Status.UNAUTHORIZED).entity("Requester não encontrado.").build();
                 }
@@ -50,13 +45,9 @@ public class ListUsersResource {
             tokenEntity = tokenOpt.get();
         }
 
-        String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();
-        JsonArray result = DatastoreListUsers.buildVisibleUsers(requesterRole);
+        String requesterUsername = DatastoreToken.getUsername(tokenEntity);
+        String requesterRole = DatastoreToken.getRole(tokenEntity);
 
-        JsonObject response = new JsonObject();
-        response.addProperty("Existing users: ", result.size());
-        response.add("users", result);
-        return Response.ok(g.toJson(response)).build();
+        return DatastoreChangeAttributes.processAttributeUpdate(data, requesterUsername, requesterRole);
     }
-
 }
