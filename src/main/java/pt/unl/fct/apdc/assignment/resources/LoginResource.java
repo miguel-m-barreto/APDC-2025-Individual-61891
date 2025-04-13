@@ -112,9 +112,10 @@ public class LoginResource {
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_INVALID_CREDENTIALS).build();
 			}
 
-			//	Limpar sessões expiradas antes de criar a nova
+			//	Limpar sessões antes de criar a nova
 			LOG.info("A limpar sessões expiradas para o utilizador: " + username);
-			int deleted = DatastoreLogin.deleteExpiredSessions(username);
+			//int deleted = DatastoreLogin.deleteExpiredSessions(username);
+			int deleted = DatastoreLogin.KeepLatestSessionOnly(username);
 			LOG.info("Deleted " + deleted + " expired sessions for user: " + username);
 
 			// Login bem-sucedido

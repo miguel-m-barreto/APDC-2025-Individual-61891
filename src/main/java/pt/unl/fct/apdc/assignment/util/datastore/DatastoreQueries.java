@@ -150,6 +150,15 @@ public class DatastoreQueries {
     return results.hasNext() ? Optional.of(results.next()) : Optional.empty();
 	}
 
+	public static Optional<Entity> getTokenEntityByTokenIDorVerifier(String tokenID) {
+		Optional <Entity> tokenEntity = getTokenEntityByVerifier(tokenID);
+		if (tokenEntity.isPresent()) {
+			return tokenEntity;
+		}
+		return getTokenEntityByID(tokenID);
+	}
+
+
 	public static List<Entity> getTokensByUsername(String username) {
 		Key userKey = getUserKey(username);
 	
@@ -226,6 +235,34 @@ public class DatastoreQueries {
 			}
 		}
 		return count;
+	}
+	
+	public static Optional<Entity> getToken(String identifier) {
+		Optional<Entity> tokenOpt = getTokenEntityByVerifier(identifier);
+		if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
+			return tokenOpt;
+		
+		tokenOpt = getTokenEntityByID(identifier);
+		if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
+			return tokenOpt;
+
+
+		Optional<Entity> userOpt = getUserByUsername(identifier);
+		if (userOpt.isEmpty()) {
+			userOpt = getUserByEmail(identifier);
+			if (userOpt.isEmpty()) return Optional.empty();
+		}
+
+		// userOpt is present, so we can safely get the username
+		String username = userOpt.get().getKey().getName();
+		// Check if the user has a valid session token
+		tokenOpt = DatastoreToken.getLatestValidSession(username);
+		// If a valid session token is found, return it
+		if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
+			return tokenOpt;
+
+		// If no valid session token is found, return empty
+		return Optional.empty();
 	}
 	
 	public static Datastore getDatastore() {

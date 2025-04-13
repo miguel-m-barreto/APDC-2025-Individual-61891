@@ -46,11 +46,47 @@ public class DatastoreToken {
             .max(Comparator.comparingLong(e -> e.getLong("session_expiration")));
     }
 
-    public static void deleteAllSessions(String username) {
+    public static int deleteAllSessions(String username) {
+        int deletedCount = 0;
         List<Entity> sessions = DatastoreQueries.getTokensByUsername(username);
         for (Entity session : sessions) {
+            deletedCount++;
             datastore.delete(session.getKey());
         }
+        return deletedCount;
+    }
+
+    public static int deleteAllSessionsKeepLast(String username, Entity lastSession) {
+        int deletedCount = 0;
+        List<Entity> sessions = DatastoreQueries.getTokensByUsername(username);
+        for (Entity session : sessions) {
+            if (session.getKey().equals(lastSession.getKey())) {
+                //nao fazer nada
+                
+            } else {
+                deletedCount++;
+                datastore.delete(session.getKey());
+            }
+        }
+        return deletedCount;
+    }
+
+    public static int KeepLatest(String username) {
+        int deletedCount = 0;
+        Optional<Entity> latestSession = getLatestValidSession(username);
+        if (!latestSession.isPresent()) {
+            deletedCount = deleteAllSessions(username);
+        }
+        else {
+            Entity session = latestSession.get();
+            deletedCount = deleteAllSessionsKeepLast(username, session);
+        }
+        return deletedCount;
+    }
+
+
+    public static void invalidateToken(Key tokenKey) {
+        datastore.delete(tokenKey);
     }
     
 }

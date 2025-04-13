@@ -89,5 +89,9 @@ public class DatastoreLogin {
 	public static int deleteExpiredSessions(String username) {
 		return DatastoreQueries.deleteExpiredSessions(username);
 	}
+
+	public static int KeepLatestSessionOnly(String username) {
+		return DatastoreToken.KeepLatest(username);
+	}
 	
 }

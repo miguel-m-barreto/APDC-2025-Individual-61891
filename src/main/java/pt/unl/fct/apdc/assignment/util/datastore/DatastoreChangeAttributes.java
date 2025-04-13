@@ -13,7 +13,11 @@ public class DatastoreChangeAttributes {
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 
     public static Response processAttributeUpdate(ChangeAttributesData data, String requesterUsername, String requesterRole) {
-        Optional<Entity> targetOpt = DatastoreQueries.getUserByUsername(data.targetUsername);
+        if (data.targetUsername == null || data.targetUsername.isBlank()) {
+            data.targetUsername = requesterUsername;
+            
+        }
+        Optional<Entity> targetOpt = DatastoreQueries.getUserByUsernameOrEmail(data.targetUsername);
         if (targetOpt.isEmpty()) {
             return Response.status(Status.NOT_FOUND).entity("Utilizador a alterar não existe.").build();
         }
@@ -25,13 +29,16 @@ public class DatastoreChangeAttributes {
         boolean targetIsActivated = targetState.equalsIgnoreCase("ATIVADA");
 
         boolean changingControlFields = data.role != null || data.state != null;
-        boolean changingUserIdFields = data.username != null || data.email != null || data.name != null;
+        boolean changingUserIdFields = data.username != null || data.email != null;
 
         if (!Permission.canChangeAttributes(
                 requesterRole, requesterUsername, targetUsername,
                 targetRole, targetIsActivated,
                 changingControlFields, changingUserIdFields
         )) {
+            if (targetUsername.equals(requesterUsername)) {
+                return Response.status(Status.FORBIDDEN).entity("Não tens permissão para editar um ou mais desses atributos.").build();
+            }
             return Response.status(Status.FORBIDDEN).entity("Não tens permissão para editar esta conta.").build();
         }
 
@@ -46,9 +53,6 @@ public class DatastoreChangeAttributes {
             datastore.delete(original.getKey());
         } else {
             builder = Entity.newBuilder(original);
-
-
-        
 
             hasChanges |= maybeSet(builder, original, "user_name", data.name);
             hasChanges |= maybeSet(builder, original, "user_phone", data.phone);
@@ -74,10 +78,11 @@ public class DatastoreChangeAttributes {
                     hasChanges = true;
                 }
 
+                /*
                 if (data.password != null && !data.password.isBlank()) {
                     builder.set("user_pwd", hashPassword(data.password));
                     hasChanges = true;
-                }
+                }*/
             }
         }
 
@@ -89,6 +94,7 @@ public class DatastoreChangeAttributes {
         return Response.ok("Atributos atualizados com sucesso.").build();
     }
 
+    
     private static Entity.Builder buildWithNewKey(Entity original, ChangeAttributesData data, String newUsername) {
         Key newKey = datastore.newKeyFactory().setKind("User").newKey(newUsername);
 
@@ -104,7 +110,7 @@ public class DatastoreChangeAttributes {
                 .set("user_profile", data.profile != null ? data.profile : getOrDefault(original, "user_profile"))
                 .set("user_employer_nif", data.employer_nif != null ? data.employer_nif : getOrDefault(original, "user_employer_nif"))
                 .set("user_photo_url", data.photoURL != null ? data.photoURL : getOrDefault(original, "user_photo_url"))
-                .set("user_pwd", data.password != null ? hashPassword(data.password) : original.getString("user_pwd"))
+                //.set("user_pwd", data.password != null ? hashPassword(data.password) : original.getString("user_pwd"))
                 .set("user_role", data.role != null ? data.role : original.getString("user_role"))
                 .set("user_account_state", data.state != null ? data.state : original.getString("user_account_state"))
                 .set("user_creation_time", original.getLong("user_creation_time"));
@@ -118,6 +124,7 @@ public class DatastoreChangeAttributes {
         return false;
     }
 
+    
     private static String getOrDefault(Entity entity, String field) {
         return entity.contains(field) ? entity.getString(field) : "NOT DEFINED";
     }
