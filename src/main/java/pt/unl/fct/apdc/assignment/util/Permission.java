@@ -23,4 +23,20 @@ public class Permission {
     private static boolean isEndUserOrPartner(String role) {
         return role.equals("ENDUSER") || role.equals("PARTNER");
     }
+
+    public static boolean canChangeState(String requesterRole, String currentState, String newState) {
+        requesterRole = requesterRole.toUpperCase();
+        currentState = currentState.toUpperCase();
+        newState = newState.toUpperCase();
+    
+        if (requesterRole.equals("ADMIN")) return true;
+    
+        if (requesterRole.equals("BACKOFFICE")) {
+            // Só pode alternar entre ATIVADA e DESATIVADA
+            return  newState.equals("DESATIVADA") || newState.equals("ATIVADA");
+        }
+    
+        return false;
+    }
+    
 }

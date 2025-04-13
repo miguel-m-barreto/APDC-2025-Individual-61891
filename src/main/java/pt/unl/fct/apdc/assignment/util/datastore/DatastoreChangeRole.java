@@ -30,7 +30,11 @@ public class DatastoreChangeRole {
         String currentRole = target.getString("user_role").toUpperCase();
         newRole = newRole.toUpperCase();
 
-        if (checkRequestedRole(newRole)) {
+        if (currentRole.equals(newRole)) {
+            return Response.status(Status.BAD_REQUEST).entity("Role não alterada.\nA role atual é a mesma que a nova role.").build();
+        }
+
+        if (!isRoleValid(newRole)) {
             return Response.status(Status.BAD_REQUEST).entity("Role inválida.").build();
         }
 
@@ -44,7 +48,8 @@ public class DatastoreChangeRole {
 
         datastore.update(updatedUser);
 
-        //get active sessions of the target user and swap the role in each session with method getActiveSessions(String username)
+        // get active sessions of the target user and swap the role in each session 
+        // with method getActiveSessions(String username)
         List<Entity> activeSessions = DatastoreQuery.getActiveSessions(targetUser);
         for (Entity session : activeSessions) {
             Entity updatedSession = Entity.newBuilder(session)
@@ -76,7 +81,7 @@ public class DatastoreChangeRole {
         return DatastoreToken.getLatestValidSession(username);
     }
 
-    private static boolean checkRequestedRole(String role) {
+    private static boolean isRoleValid(String role) {
         return role.equals("ENDUSER") || role.equals("PARTNER") || role.equals("BACKOFFICE") || role.equals("ADMIN");
     }
 }
