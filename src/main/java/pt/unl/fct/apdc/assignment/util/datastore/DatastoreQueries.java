@@ -5,6 +5,7 @@ import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.OrderBy;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 
+import jakarta.ws.rs.core.Response;
 import pt.unl.fct.apdc.assignment.util.AuthToken;
 
 import com.google.cloud.Timestamp;
@@ -138,6 +139,16 @@ public class DatastoreQueries {
     QueryResults<Entity> results = datastore.run(query);
     return results.hasNext() ? Optional.of(results.next()) : Optional.empty();
 	}	
+
+	public static Optional<Entity> getTokenEntityByVerifier(String verifier) {
+		Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("Session")
+            .setFilter(StructuredQuery.PropertyFilter.eq("session_verification", verifier))
+            .build();
+
+    QueryResults<Entity> results = datastore.run(query);
+    return results.hasNext() ? Optional.of(results.next()) : Optional.empty();
+	}
 
 	public static List<Entity> getTokensByUsername(String username) {
 		Key userKey = getUserKey(username);

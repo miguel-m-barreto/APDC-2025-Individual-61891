@@ -56,7 +56,7 @@ public class DatastoreLogin {
 					.set("user_stats_logins", 0L)
 					.set("user_stats_failed", 1L)
 					.set("user_first_login", System.currentTimeMillis())
-					.set("user_last_login", System.currentTimeMillis())
+					.set("user_last_attempt", System.currentTimeMillis())
 					.build();
 		}
 		return Entity.newBuilder(statsKey)

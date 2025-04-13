@@ -29,25 +29,31 @@ public class ListUsersResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response listUsers(ListUsersData data) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.identifier);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByVerifier(data.identifier);
         Entity tokenEntity;
 
         if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
             tokenEntity = tokenOpt.get();
         } else {
-            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
-            if (userOpt.isEmpty()) {
-                userOpt = DatastoreQueries.getUserByEmail(data.identifier);
+            tokenOpt = DatastoreQueries.getTokenEntityByID(data.identifier);
+
+            if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
+                tokenEntity = tokenOpt.get();
+            } else {
+                Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
                 if (userOpt.isEmpty()) {
-                    return Response.status(Response.Status.UNAUTHORIZED).entity("Requester não encontrado.").build();
+                    userOpt = DatastoreQueries.getUserByEmail(data.identifier);
+                    if (userOpt.isEmpty()) {
+                        return Response.status(Response.Status.UNAUTHORIZED).entity("Requester não encontrado.").build();
+                    }
                 }
+                String username = userOpt.get().getKey().getName();
+                tokenOpt = DatastoreToken.getLatestValidSession(username);
+                if (tokenOpt.isEmpty()) {
+                    return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+                }
+                tokenEntity = tokenOpt.get();
             }
-            String username = userOpt.get().getKey().getName();
-            tokenOpt = DatastoreToken.getLatestValidSession(username);
-            if (tokenOpt.isEmpty()) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
-            }
-            tokenEntity = tokenOpt.get();
         }
 
         String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();

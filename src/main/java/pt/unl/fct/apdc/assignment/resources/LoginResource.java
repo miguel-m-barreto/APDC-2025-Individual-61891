@@ -84,9 +84,7 @@ public class LoginResource {
 
 		if (state.equals("SUSPENSA")) {
 			return Response.status(Status.FORBIDDEN).entity("Conta suspensa. Contacte o suporte.").build();
-		}
-
-		if (state.equals("DESATIVADA")) {
+		} else if (state.equals("DESATIVADA")) {
 			// Reativar automaticamente
 			Entity updatedUser = Entity.newBuilder(user)
 					.set("user_account_state", "ATIVADA")

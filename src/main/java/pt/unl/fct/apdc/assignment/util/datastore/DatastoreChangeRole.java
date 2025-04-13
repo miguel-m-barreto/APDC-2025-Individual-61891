@@ -22,7 +22,7 @@ public class DatastoreChangeRole {
         if (targetOpt.isEmpty()) {
             targetOpt = DatastoreQueries.getUserByEmail(targetUser);
             if (targetOpt.isEmpty()) {
-                return Response.status(Status.NOT_FOUND).entity("Utilizador alvo não existe.").build();
+                return Response.status(Status.NOT_FOUND).entity("Utilizador para alterar o role não existe.").build();
             }
         }
 
@@ -65,11 +65,15 @@ public class DatastoreChangeRole {
     }
 
     public static Optional<Entity> resolveRequesterToken(String requesterID) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(requesterID);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByVerifier(requesterID);
 
-        if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
+        if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
             return tokenOpt;
-        }
+        
+        tokenOpt = DatastoreQueries.getTokenEntityByID(requesterID);
+
+        if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
+            return tokenOpt;
 
         Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(requesterID);
         if (userOpt.isEmpty()) {
