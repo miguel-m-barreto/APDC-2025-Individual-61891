@@ -1,37 +1,43 @@
 package pt.unl.fct.apdc.assignment.resources;
 
-import java.util.Optional;
-import java.util.logging.Logger;
-
 import com.google.cloud.datastore.Entity;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.*;
-
 import com.google.gson.Gson;
-import pt.unl.fct.apdc.assignment.util.data.ChangeAccountStateData;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import pt.unl.fct.apdc.assignment.util.data.ListUsersData;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreChangeState;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreListUsers;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
 
-@Path("/changestate")
+import java.util.Optional;
+
+
+@Path("/listusers")
 @Produces(MediaType.APPLICATION_JSON)
-public class ChangeStateResource {
+public class ListUsersResource {
 
-    private static final Logger LOG = Logger.getLogger(ChangeStateResource.class.getName());
     private static final Gson g = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeAccountState(ChangeAccountStateData data) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.requesterID);
+    public Response listUsers(ListUsersData data) {
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.identifier);
         Entity tokenEntity;
 
         if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
             tokenEntity = tokenOpt.get();
         } else {
-            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.requesterID);
+            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
             if (userOpt.isEmpty()) {
-                userOpt = DatastoreQueries.getUserByEmail(data.requesterID);
+                userOpt = DatastoreQueries.getUserByEmail(data.identifier);
                 if (userOpt.isEmpty()) {
                     return Response.status(Response.Status.UNAUTHORIZED).entity("Requester não encontrado.").build();
                 }
@@ -45,6 +51,11 @@ public class ChangeStateResource {
         }
 
         String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();
-        return DatastoreChangeState.processStateChange(requesterRole, data.targetUser, data.newState);
+        JsonArray result = DatastoreListUsers.buildVisibleUsers(requesterRole);
+
+        JsonObject response = new JsonObject();
+        response.add("users", result);
+        return Response.ok(g.toJson(response)).build();
     }
+
 }

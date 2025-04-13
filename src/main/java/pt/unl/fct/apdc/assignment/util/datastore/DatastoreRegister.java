@@ -9,10 +9,10 @@ public class DatastoreRegister {
      * Reutiliza os métodos estáticos do DatastoreUtil.
      */
     public static boolean validateRegisterData(RegisterData data) {
-        return DatastoreQuery.getUserByUsername(data.username).isEmpty() &&
-               DatastoreQuery.getUserByEmail(data.email).isEmpty() &&
-               DatastoreQuery.getUserByPhone(data.phone).isEmpty() &&
-               DatastoreQuery.getUserByCC(data.cc).isEmpty() &&
-               DatastoreQuery.getUserByNif(data.nif).isEmpty();
+        return DatastoreQueries.getUserByUsername(data.username).isEmpty() &&
+               DatastoreQueries.getUserByEmail(data.email).isEmpty() &&
+               DatastoreQueries.getUserByPhone(data.phone).isEmpty() &&
+               DatastoreQueries.getUserByCC(data.cc).isEmpty() &&
+               DatastoreQueries.getUserByNif(data.nif).isEmpty();
     }
 }

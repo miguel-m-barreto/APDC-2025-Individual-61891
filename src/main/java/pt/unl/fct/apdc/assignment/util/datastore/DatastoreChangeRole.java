@@ -18,9 +18,9 @@ public class DatastoreChangeRole {
     private static final Logger LOG = Logger.getLogger(DatastoreChangeRole.class.getName());
 
     public static Response processRoleChange(String requesterRole, String targetUser, String newRole) {
-        Optional<Entity> targetOpt = DatastoreQuery.getUserByUsername(targetUser);
+        Optional<Entity> targetOpt = DatastoreQueries.getUserByUsername(targetUser);
         if (targetOpt.isEmpty()) {
-            targetOpt = DatastoreQuery.getUserByEmail(targetUser);
+            targetOpt = DatastoreQueries.getUserByEmail(targetUser);
             if (targetOpt.isEmpty()) {
                 return Response.status(Status.NOT_FOUND).entity("Utilizador alvo não existe.").build();
             }
@@ -50,7 +50,7 @@ public class DatastoreChangeRole {
 
         // get active sessions of the target user and swap the role in each session 
         // with method getActiveSessions(String username)
-        List<Entity> activeSessions = DatastoreQuery.getActiveSessions(targetUser);
+        List<Entity> activeSessions = DatastoreQueries.getActiveSessions(targetUser);
         for (Entity session : activeSessions) {
             Entity updatedSession = Entity.newBuilder(session)
                     .set("session_role", newRole)
@@ -65,15 +65,15 @@ public class DatastoreChangeRole {
     }
 
     public static Optional<Entity> resolveRequesterToken(String requesterID) {
-        Optional<Entity> tokenOpt = DatastoreQuery.getTokenEntityByID(requesterID);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(requesterID);
 
         if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
             return tokenOpt;
         }
 
-        Optional<Entity> userOpt = DatastoreQuery.getUserByUsername(requesterID);
+        Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(requesterID);
         if (userOpt.isEmpty()) {
-            userOpt = DatastoreQuery.getUserByEmail(requesterID);
+            userOpt = DatastoreQueries.getUserByEmail(requesterID);
             if (userOpt.isEmpty()) return Optional.empty();
         }
 

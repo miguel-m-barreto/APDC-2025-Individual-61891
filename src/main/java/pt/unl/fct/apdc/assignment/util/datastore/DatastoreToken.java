@@ -41,13 +41,13 @@ public class DatastoreToken {
     }
 
     public static Optional<Entity> getLatestValidSession(String username) {
-        List<Entity> sessions = DatastoreQuery.getActiveSessions(username);
+        List<Entity> sessions = DatastoreQueries.getActiveSessions(username);
         return sessions.stream()
             .max(Comparator.comparingLong(e -> e.getLong("session_expiration")));
     }
 
     public static void deleteAllSessions(String username) {
-        List<Entity> sessions = DatastoreQuery.getTokensByUsername(username);
+        List<Entity> sessions = DatastoreQueries.getTokensByUsername(username);
         for (Entity session : sessions) {
             datastore.delete(session.getKey());
         }

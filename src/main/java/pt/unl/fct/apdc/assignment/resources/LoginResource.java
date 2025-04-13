@@ -28,7 +28,7 @@ import jakarta.ws.rs.core.Response.Status;
 import pt.unl.fct.apdc.assignment.util.AuthToken;
 import pt.unl.fct.apdc.assignment.util.data.LoginData;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreLogin;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQuery;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
 
 
@@ -66,10 +66,10 @@ public class LoginResource {
 		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.identifier);
 
 		// Tenta obter o utilizador por username
-		Optional<Entity> userOpt = DatastoreQuery.getUserByUsername(data.identifier);
+		Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.identifier);
 		// Se não encontrar, tenta por email
 		if (userOpt.isEmpty()) {
-			userOpt = DatastoreQuery.getUserByEmail(data.identifier);
+			userOpt = DatastoreQueries.getUserByEmail(data.identifier);
 			if (userOpt.isEmpty()) {
 				LOG.warning(LOG_MESSAGE_UNKNOWN_USER + data.identifier);
 				return Response.status(Status.FORBIDDEN).entity(MESSAGE_USER_NOT_FOUND).build();
@@ -99,8 +99,8 @@ public class LoginResource {
 
 			//	Limpar sessões expiradas antes de criar a nova
 			LOG.info("A limpar sessões expiradas para o utilizador: " + username);
-			DatastoreLogin.deleteExpiredSessions(username);
-			LOG.info("Sessões expiradas limpas com sucesso para o utilizador: " + username);
+			int deleted = DatastoreLogin.deleteExpiredSessions(username);
+			LOG.info("Deleted " + deleted + " expired sessions for user: " + username);
 
 			// Login bem-sucedido
 			Key statsKey = DatastoreLogin.createStatsKey(username);

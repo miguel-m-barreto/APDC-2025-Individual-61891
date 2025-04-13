@@ -25,7 +25,7 @@ import static pt.unl.fct.apdc.assignment.util.StringUtil.normalizeEmail;
 //  It uses the Google Cloud Datastore Java client library to perform these operations.
 import java.util.Optional;
 
-public class DatastoreQuery {
+public class DatastoreQueries {
 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 	private static final KeyFactory userKeyFactory = datastore.newKeyFactory().setKind("User");
@@ -43,6 +43,10 @@ public class DatastoreQuery {
 		return getLastUserLoginDates(username, DEFAULT_LIMIT);
 	}
 
+	public static Key getUserKey(String username) {
+		return userKeyFactory.newKey(username);
+	}
+
 	public static List<Date> getLastUserLoginDates(String username, int limit) {
 		//Key ancestorKey = userKeyFactory.newKey(username);
 
@@ -55,7 +59,7 @@ public class DatastoreQuery {
 					.setFilter(
 							CompositeFilter.and(
 									PropertyFilter.hasAncestor(
-										datastore.newKeyFactory().setKind("User").newKey(username)),
+										getUserKey(username)),
 									PropertyFilter.ge(USER_LOGIN_TIME, yesterday)
 									)
 							)
@@ -136,7 +140,7 @@ public class DatastoreQuery {
 	}	
 
 	public static List<Entity> getTokensByUsername(String username) {
-		Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
+		Key userKey = getUserKey(username);
 	
 		Query<Entity> query = Query.newEntityQueryBuilder()
 				.setKind("Session")
@@ -149,7 +153,7 @@ public class DatastoreQuery {
 	}
 
 	public static List<Entity> getActiveSessions(String username) {
-        Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
+        Key userKey = getUserKey(username);
 
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind("Session")
@@ -172,7 +176,7 @@ public class DatastoreQuery {
     }
 
 	public static List<Entity> getExpiredSessions(String username) {
-		Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
+		Key userKey = getUserKey(username);
 
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind("Session")
@@ -187,12 +191,31 @@ public class DatastoreQuery {
 
             if (!DatastoreToken.isTokenValid(session))
 				expiredSessions.add(session); // ativa - adiciona à lista
-            else 
-                datastore.delete(session.getKey()); // expirada - remove do datastore
         }
-
+		
         return expiredSessions;
-	}	
+	}
+
+	public static int deleteExpiredSessions(String username) {
+		Key userKey = getUserKey(username);
+		int count = 0;
+
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("Session")
+            .setFilter(PropertyFilter.hasAncestor(userKey))
+            .build();
+        QueryResults<Entity> results = datastore.run(query);
+
+        while (results.hasNext()) {
+            Entity session = results.next();
+
+            if (!DatastoreToken.isTokenValid(session)) {
+				count++; // expirada - adiciona à lista
+				datastore.delete(session.getKey());; // ativa - adiciona à lista
+			}
+		}
+		return count;
+	}
 	
 	public static Datastore getDatastore() {
 		return datastore;

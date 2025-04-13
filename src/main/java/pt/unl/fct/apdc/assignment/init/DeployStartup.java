@@ -17,7 +17,7 @@ public class DeployStartup {
     private static final String ROOT_PHONE = "000000000";
     private static final String ROOT_PROFILE = "privado";
     private static final String ROOT_ROLE = "ADMIN";
-    private static final String ROOT_STATE = "ATIVO";
+    private static final String ROOT_STATE = "ATIVADA";
     private static final String ROOT_PHOTO = "https://storage.googleapis.com/shining-expanse-453014-c4.appspot.com/Admin_user.jpg";
 
     public static void createRootUser() {

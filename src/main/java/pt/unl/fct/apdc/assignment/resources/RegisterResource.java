@@ -33,7 +33,7 @@ public class RegisterResource {
 	private static final String DEFAULT_ROLE_STRING = "ENDUSER";
 	private static final String DEFAULT_STATE_STRING = "DESATIVADA";
 	private static final String DEFAULT_USER_PHOTO = "https://storage.googleapis.com/shining-expanse-453014-c4.appspot.com/default_user.jpeg";
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = "—";
 
 	//private final Gson g = new Gson();
 

@@ -15,9 +15,9 @@ public class DatastoreRemoveAccount {
     private static final Logger LOG = Logger.getLogger(DatastoreRemoveAccount.class.getName());
 
     public static Response processAccountRemoval(String requesterRole, String targetUser) {
-        Optional<Entity> targetOpt = DatastoreQuery.getUserByUsername(targetUser);
+        Optional<Entity> targetOpt = DatastoreQueries.getUserByUsername(targetUser);
         if (targetOpt.isEmpty()) {
-            targetOpt = DatastoreQuery.getUserByEmail(targetUser);
+            targetOpt = DatastoreQueries.getUserByEmail(targetUser);
             if (targetOpt.isEmpty()) {
                 return Response.status(Status.NOT_FOUND).entity("Conta a remover não encontrada.").build();
             }

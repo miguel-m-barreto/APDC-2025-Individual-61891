@@ -21,15 +21,15 @@ public class RemoveAccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAccount(RemoveAccountData data) {
-        Optional<Entity> tokenOpt = DatastoreQuery.getTokenEntityByID(data.requesterID);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.requesterID);
         Entity tokenEntity;
 
         if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get())) {
             tokenEntity = tokenOpt.get();
         } else {
-            Optional<Entity> userOpt = DatastoreQuery.getUserByUsername(data.requesterID);
+            Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(data.requesterID);
             if (userOpt.isEmpty()) {
-                userOpt = DatastoreQuery.getUserByEmail(data.requesterID);
+                userOpt = DatastoreQueries.getUserByEmail(data.requesterID);
                 if (userOpt.isEmpty()) {
                     return Response.status(Response.Status.UNAUTHORIZED).entity("Requester não encontrado.").build();
                 }

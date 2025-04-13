@@ -86,11 +86,8 @@ public class DatastoreLogin {
 						.newKey());
 	}	
 
-	public static void deleteExpiredSessions(String username) {
-		List<Entity> expiredSessions = DatastoreQuery.getExpiredSessions(username);
-		for (Entity expired : expiredSessions) {
-			datastore.delete(expired.getKey());
-		}
+	public static int deleteExpiredSessions(String username) {
+		return DatastoreQueries.deleteExpiredSessions(username);
 	}
 	
 }
