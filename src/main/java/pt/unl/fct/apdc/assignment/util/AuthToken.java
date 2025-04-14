@@ -15,7 +15,10 @@ public class AuthToken {
 	// Token expiration time in milliseconds (30 seconds)
 	// public static final long EXPIRATION_TIME = 1000*30;
 	// Token expiration time in milliseconds (10 min)
-	public static final long EXPIRATION_TIME = 1000 * 60 * 10; // 10 minutes
+	// public static final long EXPIRATION_TIME = 1000 * 60 * 10; // 10 minutes
+	// Token expiration time in milliseconds (60 min)
+	public static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+	
 
 	private static final String SECRET_KEY = "SuperSecretKey123"; 
 

@@ -3,13 +3,13 @@ package pt.unl.fct.apdc.assignment.util.data;
 public class WorkSheetData {
     public String requesterID;
 
-    // Atributos obrigatórios na criação
+    // Atributos obrigatorios na criaçao
     public String reference;
     public String description;
-    public String targetType; // "Propriedade Pública" ou "Propriedade Privada"
-    public String adjudicationStatus; // "ADJUDICADO" ou "NÃO ADJUDICADO"
+    public String targetType; // "Propriedade Publica" ou "Propriedade Privada"
+    public String adjudicationStatus; // "ADJUDICADO" ou "NAO ADJUDICADO"
 
-    // Atributos só preenchidos se ADJUDICADO
+    // Atributos so preenchidos se ADJUDICADO
     public String adjudicationDate;
     public String startDate;
     public String endDate;
@@ -18,7 +18,7 @@ public class WorkSheetData {
     public String companyNIF;
 
     // Atributos que podem ser modificados por PARTNER
-    public String workState; // "NÃO INICIADO", "EM CURSO", "CONCLUÍDO"
+    public String workState; // "NAO INICIADO", "EM CURSO", "CONCLUÍDO"
     public String observations;
 
     private static final String DATE_REGEX =
