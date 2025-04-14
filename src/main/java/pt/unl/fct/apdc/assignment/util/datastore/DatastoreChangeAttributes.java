@@ -50,7 +50,6 @@ public class DatastoreChangeAttributes {
         if (changingKey) {
             builder = buildWithNewKey(original, data, newUsername);
             hasChanges = true;
-            datastore.delete(original.getKey());
         } else {
             builder = Entity.newBuilder(original);
 
@@ -90,6 +89,7 @@ public class DatastoreChangeAttributes {
             return Response.status(Status.BAD_REQUEST).entity("Nenhum atributo foi alterado.").build();
         }
 
+        datastore.delete(original.getKey());
         datastore.put(builder.build());
         return Response.ok("Atributos atualizados com sucesso.").build();
     }

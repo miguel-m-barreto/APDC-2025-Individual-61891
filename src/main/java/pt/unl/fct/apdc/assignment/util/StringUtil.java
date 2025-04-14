@@ -2,8 +2,9 @@ package pt.unl.fct.apdc.assignment.util;
 
 public class StringUtil {
 
-    private static final String PUBLIC = "público";
-	private static final String PRIVATE = "privado";
+    private static final String PUBLIC = "public";
+	private static final String PRIVATE = "private";
+    private static final String EMPTY_STRING = "NOT DEFINED";
 
     /**
      * Verifica se o campo não é nulo nem vazio (em branco).
@@ -39,13 +40,17 @@ public class StringUtil {
 	
 		profileType = normalizeStringLowerCase(profileType);
 	
-		switch (profileType) {
-			case "public":
-			case "publico":
-			case "público":
+		switch (profileType.toUpperCase()) {
+			case "PUBLIC":
+			case "PUBLICO":
+			case "PÚBLICO":
 				return PUBLIC;
-			default:
+            case "PRIVATE":
+            case "PRIVADO":
+            case "PRIVADA":
                 return PRIVATE;
+			default:
+                return EMPTY_STRING;
 		}
 	}	
 

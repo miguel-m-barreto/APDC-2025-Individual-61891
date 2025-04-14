@@ -27,6 +27,32 @@ public class DatastoreToken {
                 .build();
     }
 
+    public static Optional<Entity> resolveValidToken(String requesterID) {
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByVerifier(requesterID);
+        if (tokenOpt.isPresent() && isTokenValid(tokenOpt.get()))
+            return tokenOpt;
+    
+        tokenOpt = DatastoreQueries.getTokenEntityByID(requesterID);
+        if (tokenOpt.isPresent() && isTokenValid(tokenOpt.get()))
+            return tokenOpt;
+    
+        Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(requesterID);
+        if (userOpt.isEmpty()) {
+            userOpt = DatastoreQueries.getUserByEmail(requesterID);
+            if (userOpt.isEmpty()) return Optional.empty();
+        }
+    
+        String username = userOpt.get().getKey().getName();
+        Optional<Entity> latest = getLatestValidSession(username);
+    
+        return latest.filter(DatastoreToken::isTokenValid);
+    }
+    
+
+    public static boolean isValidTokenForUser(Entity token, String username) {
+        return token != null && getUsername(token).equals(username) && isTokenValid(token);
+    }
+
     public static boolean isTokenValid(Entity tokenEntity) {
         return tokenEntity != null &&
                tokenEntity.getLong("session_expiration") > System.currentTimeMillis();

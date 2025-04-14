@@ -40,16 +40,7 @@ public class Permission {
     }
 
     public static boolean canRemoveAccount(String requesterRole, String targetRole) {
-        requesterRole = requesterRole.toUpperCase();
-        targetRole = targetRole.toUpperCase();
-    
-        if (requesterRole.equals("ADMIN")) return true;
-    
-        if (requesterRole.equals("BACKOFFICE")) {
-            return targetRole.equals("ENDUSER") || targetRole.equals("PARTNER");
-        }
-    
-        return false;
+        return requesterRole.equals("ADMIN") && !targetRole.equals("ADMIN");
     }    
 
     public static boolean canChangeAttributes(String requesterRole, String requesterUsername, String targetUsername,

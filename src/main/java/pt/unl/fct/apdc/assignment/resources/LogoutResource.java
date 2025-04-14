@@ -21,24 +21,15 @@ public class LogoutResource {
         }
 
 
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByTokenIDorVerifier(data.token);
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
         if (tokenOpt.isEmpty()) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou já terminada.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
         }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
 
-        Entity token = tokenOpt.get();
-
-        // is token valid?
-        if (!DatastoreToken.isTokenValid(token)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou já terminada.").build();
-        }
-
-        // is owner of token?
-        if (!token.getString("session_username").equals(data.requesterID)) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Não tens permissão para terminar esta sessão.").build();
-        }
-
-        DatastoreToken.invalidateToken(token.getKey());
+        DatastoreToken.invalidateToken(tokenOpt.get().getKey());
 
         return Response.ok("{\"message\":\"Sessão terminada com sucesso.\"}").build();
     }

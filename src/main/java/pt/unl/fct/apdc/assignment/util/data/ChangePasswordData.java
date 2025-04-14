@@ -5,6 +5,7 @@ public class ChangePasswordData {
     public String oldPassword;
     public String newPassword;
     public String confirmation;
+    public String token;            // Token de autenticação do utilizador que está a fazer a alteração
 
     public ChangePasswordData() {}
 

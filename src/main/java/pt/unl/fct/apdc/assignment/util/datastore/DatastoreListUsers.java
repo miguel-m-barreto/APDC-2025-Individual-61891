@@ -34,7 +34,7 @@ public class DatastoreListUsers {
                     if (role.equals(ENDUSER_ROLE)) users.add(toJson(user, true));
                     break;
                 case "ENDUSER":
-                    if (role.equals(ENDUSER_ROLE) && profile.equalsIgnoreCase("público") && state.equalsIgnoreCase("ATIVADA")) {
+                    if (role.equals(ENDUSER_ROLE) && profile.equalsIgnoreCase("public") && state.equalsIgnoreCase("ATIVADA")) {
                         users.add(toJson(user, false));
                     }
                     break;

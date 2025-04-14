@@ -1,16 +1,13 @@
 package pt.unl.fct.apdc.assignment.resources;
 
 import com.google.cloud.datastore.Entity;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import pt.unl.fct.apdc.assignment.util.data.ChangeAttributesData;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreChangeAttributes;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
+import pt.unl.fct.apdc.assignment.util.handler.ChangeAttributesHandler;
 
 import java.util.Optional;
 
@@ -19,25 +16,66 @@ import java.util.Optional;
 public class ChangeAttributesResource {
 
     @POST
+    @Path("/own")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response changeAttributes(ChangeAttributesData data) {
-        // Validar dados de atributos
+    public Response updateOwnAttributes(ChangeAttributesData data) {
         if (!data.validAttributes()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Dados inválidos para alteração de atributos.").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
         }
 
-        Optional<Entity> tokenOpt = DatastoreQueries.getToken(data.requesterID);
-        
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
         if (tokenOpt.isEmpty()) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                           .entity("Sessão inválida ou expirada.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
         }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+
+        
 
         Entity tokenEntity = tokenOpt.get();
-        String requesterUsername = DatastoreToken.getUsername(tokenEntity);
-        String requesterRole = DatastoreToken.getRole(tokenEntity);
+        return ChangeAttributesHandler.applyChangesForEndUser(data, tokenEntity);
+    }
 
-        return DatastoreChangeAttributes.processAttributeUpdate(data, requesterUsername, requesterRole);
+    @POST
+    @Path("/backoffice")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response backofficeUpdate(ChangeAttributesData data) {
+        if (!data.validAttributes()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
+        }
+
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
+        if (tokenOpt.isEmpty()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+        }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+
+        
+        Entity tokenEntity = tokenOpt.get();
+        return ChangeAttributesHandler.applyChangesForBackoffice(data, tokenEntity);
+    }
+
+    @POST
+    @Path("/admin")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response adminUpdate(ChangeAttributesData data) {
+        if (!data.validAttributes()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
+        }
+
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
+        if (tokenOpt.isEmpty()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+        }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+
+
+        Entity tokenEntity = tokenOpt.get();
+        return ChangeAttributesHandler.applyChangesForAdmin(data, tokenEntity);
     }
 }

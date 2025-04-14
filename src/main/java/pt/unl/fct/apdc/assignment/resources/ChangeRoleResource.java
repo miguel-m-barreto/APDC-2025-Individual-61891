@@ -1,7 +1,6 @@
 package pt.unl.fct.apdc.assignment.resources;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -9,26 +8,33 @@ import jakarta.ws.rs.core.*;
 import com.google.cloud.datastore.*;
 
 import pt.unl.fct.apdc.assignment.util.data.ChangeRoleData;
+import pt.unl.fct.apdc.assignment.util.handler.ChangeRoleHandler;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
 import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
-import pt.unl.fct.apdc.assignment.util.datastore.DatastoreChangeRole;
 
 @Path("/changerole")
 @Produces(MediaType.APPLICATION_JSON)
 public class ChangeRoleResource {
 
-    private static final Logger LOG = Logger.getLogger(ChangeRoleData.class.getName());
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeRole(ChangeRoleData data) {
-        Optional<Entity> tokenOpt = DatastoreChangeRole.resolveRequesterToken(data.requesterID);
+        if (data.requesterID == null || data.requesterID.isBlank() || 
+            data.targetUser == null || data.targetUser.isBlank() ||
+            data.newRole == null || data.newRole.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
+        }
 
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
         if (tokenOpt.isEmpty()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
         }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
 
-        String requesterRole = DatastoreToken.getRole(tokenOpt.get()).toUpperCase();
-        LOG.info("Requester role: " + requesterRole + " | Target user: " + data.targetUser + " | New role: " + data.newRole);
-        return DatastoreChangeRole.processRoleChange(requesterRole, data.targetUser, data.newRole);
+
+        Entity token = tokenOpt.get();
+        return ChangeRoleHandler.processChange(data, token);
     }
 }

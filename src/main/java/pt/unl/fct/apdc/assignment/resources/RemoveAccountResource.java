@@ -1,34 +1,34 @@
 package pt.unl.fct.apdc.assignment.resources;
 
-import java.util.Optional;
-import java.util.logging.Logger;
-
 import com.google.cloud.datastore.Entity;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-
-import pt.unl.fct.apdc.assignment.util.datastore.*;
 import pt.unl.fct.apdc.assignment.util.data.RemoveAccountData;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreQueries;
+import pt.unl.fct.apdc.assignment.util.datastore.DatastoreToken;
+import pt.unl.fct.apdc.assignment.util.handler.RemoveAccountHandler;
+
+import java.util.Optional;
 
 @Path("/removeaccount")
 @Produces(MediaType.APPLICATION_JSON)
 public class RemoveAccountResource {
 
-    private static final Logger LOG = Logger.getLogger(RemoveAccountData.class.getName());
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAccount(RemoveAccountData data) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getToken(data.requesterID);
-        if (tokenOpt.isEmpty()) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                           .entity("Sessão inválida ou expirada.").build();
+        if (data == null || data.requesterID == null || data.requesterID.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
         }
 
-        Entity tokenEntity = tokenOpt.get();
+        // Verificar sessão
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
+        if (tokenOpt.isEmpty()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
+        }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
 
-        String requesterRole = DatastoreToken.getRole(tokenEntity).toUpperCase();
-        LOG.info("Requester role: " + requesterRole + " | Target user: " + data.targetUser + " | Remove account");
-        return DatastoreRemoveAccount.processAccountRemoval(requesterRole, data.targetUser);
+        return RemoveAccountHandler.removeAccount(data, tokenOpt.get());
     }
 }

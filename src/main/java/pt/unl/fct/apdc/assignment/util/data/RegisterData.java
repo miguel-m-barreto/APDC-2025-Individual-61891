@@ -10,7 +10,7 @@ public class RegisterData {
 	public String email;
 	public String name;
 	public String phone;
-	public String profileType; // "público" ou "privado"
+	public String profileType; // "public" ou "private"
 
 	// Atributos opcionais
 	public String cc;
@@ -77,7 +77,7 @@ public class RegisterData {
 				email.matches("^[A-Za-z0-9+_.-]{1,30}@[A-Za-z0-9.-]{1,30}\\.[A-Za-z]{2,6}$") &&	 // Formato de email válido
 
 				// Condições para validar o profileType
-				// O profileType deve ser "público" ou "privado"
+				// O profileType deve ser "public" ou "private"
 				profileType.matches("(?i)public|publico|público|privado|private") &&
 				
 				// Codiçoes para validar os campos opcionais

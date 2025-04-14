@@ -25,6 +25,7 @@ public class ChangeAttributesData {
     public String email;    
     /*public String password;*/
     public String confirmation; // Confirmação da password (para evitar erros de digitação)
+    public String token; // Token de autenticação do utilizador que está a fazer a alteração
 
     public ChangeAttributesData() {}
 
@@ -79,7 +80,7 @@ public class ChangeAttributesData {
                 (email == null ||
 				email.matches("^[A-Za-z0-9+_.-]{1,30}@[A-Za-z0-9.-]{1,30}\\.[A-Za-z]{2,6}$")) &&	 // Formato de email válido
 				// Condições para validar o profileType
-				// O profileType deve ser "público" ou "privado"
+				// O profileType deve ser "public" ou "private"
                 (
                 profile == null ||
 				profile.matches("(?i)public|publico|público|privado|private")) &&

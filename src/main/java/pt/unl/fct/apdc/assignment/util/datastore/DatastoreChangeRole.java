@@ -64,27 +64,6 @@ public class DatastoreChangeRole {
         return Response.ok(result.toString()).build();
     }
 
-    public static Optional<Entity> resolveRequesterToken(String requesterID) {
-        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByVerifier(requesterID);
-
-        if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
-            return tokenOpt;
-        
-        tokenOpt = DatastoreQueries.getTokenEntityByID(requesterID);
-
-        if (tokenOpt.isPresent() && DatastoreToken.isTokenValid(tokenOpt.get()))
-            return tokenOpt;
-
-        Optional<Entity> userOpt = DatastoreQueries.getUserByUsername(requesterID);
-        if (userOpt.isEmpty()) {
-            userOpt = DatastoreQueries.getUserByEmail(requesterID);
-            if (userOpt.isEmpty()) return Optional.empty();
-        }
-
-        String username = userOpt.get().getKey().getName();
-        return DatastoreToken.getLatestValidSession(username);
-    }
-
     private static boolean isRoleValid(String role) {
         return role.equals("ENDUSER") || role.equals("PARTNER") || role.equals("BACKOFFICE") || role.equals("ADMIN");
     }

@@ -24,10 +24,12 @@ public class ChangePasswordResource {
         }
 
         // Verificar sessão
-        Optional<Entity> tokenOpt = DatastoreQueries.getToken(data.requesterID);
+        Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
         if (tokenOpt.isEmpty()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
         }
+        if (!DatastoreToken.isValidTokenForUser(tokenOpt.get(), data.requesterID)) 
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Sessão inválida ou expirada.").build();
 
         Entity tokenEntity = tokenOpt.get();
         String username = DatastoreToken.getUsername(tokenEntity);

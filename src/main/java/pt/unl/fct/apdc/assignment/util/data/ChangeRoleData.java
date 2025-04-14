@@ -4,6 +4,7 @@ public class ChangeRoleData {
     public String requesterID; // tokenID, username ou email
     public String targetUser;  // username ou email
     public String newRole;
+    public String token;      // Token de autenticação do utilizador que está a fazer a alteração
 
     public ChangeRoleData() {}
 
