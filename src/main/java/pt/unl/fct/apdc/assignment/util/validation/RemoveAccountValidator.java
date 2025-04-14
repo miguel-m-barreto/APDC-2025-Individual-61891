@@ -12,7 +12,7 @@ public class RemoveAccountValidator {
         String targetRole = target.getString("user_role");
         String targetUsername = target.getKey().getName();
 
-        // Impedir que um user remova a sua própria conta (opcional, ativa se quiseres)
+        // Impedir que um user remova a sua própria conta
         if (requesterUsername.equals(targetUsername)) {
             return false;
         }
