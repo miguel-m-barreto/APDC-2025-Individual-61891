@@ -1,6 +1,5 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
-import static pt.unl.fct.apdc.assignment.util.StringUtil.normalizeWorksheetStatus;
 
 public class WorkSheetListData {
     public String requesterID;

@@ -1,7 +1,5 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
-import org.checkerframework.checker.units.qual.t;
-
 public class ChangePasswordData {
     public String requesterID;       // Token, username ou email
     public String oldPassword;

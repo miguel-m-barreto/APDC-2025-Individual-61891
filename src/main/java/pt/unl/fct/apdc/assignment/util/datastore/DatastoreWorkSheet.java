@@ -209,8 +209,8 @@ public class DatastoreWorkSheet {
         while (results.hasNext()) {
             Entity ws = results.next();
             String status = ws.contains("adjudicationStatus") ? ws.getString("adjudicationStatus").toUpperCase() : "";
-
-            if (requestedStates.contains(status)) {
+            String statusWork = ws.contains("workState") ? ws.getString("workState").toUpperCase() : "";
+            if (requestedStates.contains(status) || requestedStates.contains(statusWork)) {
                 JsonObject obj = new JsonObject();
                 obj.addProperty("reference", ws.getString("reference"));
                 obj.addProperty("description", ws.getString("description"));
