@@ -25,6 +25,10 @@ public class ListUsersResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response listUsers(ListUsersData data) {
+        if (!data.validAttributes()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
+        }
+
         /// Verificar sessão
         Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);
         if (tokenOpt.isEmpty()) {

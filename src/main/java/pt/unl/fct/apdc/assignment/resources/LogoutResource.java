@@ -16,7 +16,7 @@ public class LogoutResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response logout(LogoutData data) {
-        if (!data.isValid()) {
+        if (!data.validAttributes()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Identificador inválido.").build();
         }
 

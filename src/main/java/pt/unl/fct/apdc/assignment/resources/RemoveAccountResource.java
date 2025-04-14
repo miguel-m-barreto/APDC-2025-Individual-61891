@@ -17,7 +17,7 @@ public class RemoveAccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAccount(RemoveAccountData data) {
-        if (data == null || data.requesterID == null || data.requesterID.isBlank()) {
+        if (!data.validAttributes()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
         }
 

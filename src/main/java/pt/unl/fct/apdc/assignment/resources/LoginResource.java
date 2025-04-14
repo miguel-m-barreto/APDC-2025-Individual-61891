@@ -97,6 +97,7 @@ public class LoginResource {
 		Transaction txn = datastore.newTransaction();
 		try {
 			// Verifica a password
+
 			String hashedPWD = user.getString(USER_PWD);
 			if (!hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
 				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.requesterID);

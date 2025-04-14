@@ -6,7 +6,12 @@ public class ListUsersData {
 
     public ListUsersData() {}
 
-    public ListUsersData(String requesterID) {
+    public ListUsersData(String requesterID, String token) {
         this.requesterID = requesterID;
+        this.token = token; // Token de autenticação do utilizador que está a fazer a alteração
+    }
+
+    public boolean validAttributes() {
+        return requesterID != null && token != null;
     }
 }

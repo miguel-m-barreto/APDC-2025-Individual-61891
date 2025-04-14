@@ -19,9 +19,7 @@ public class ChangeRoleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeRole(ChangeRoleData data) {
-        if (data.requesterID == null || data.requesterID.isBlank() || 
-            data.targetUser == null || data.targetUser.isBlank() ||
-            data.newRole == null || data.newRole.isBlank()) {
+        if (!data.validAttributes()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
         }
 

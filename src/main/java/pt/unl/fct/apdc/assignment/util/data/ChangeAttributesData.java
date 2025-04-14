@@ -32,7 +32,7 @@ public class ChangeAttributesData {
     public ChangeAttributesData(String requesterID, String targetUsername, String name, String phone,
                                 String address, String job, String employer, String nif, String cc,
                                 String profile, String employer_nif, String photoURL, String role,
-                                String state, String username, String email, /*String password,*/ String confirmation) {
+                                String state, String username, String email, /*String password,*/ String confirmation, String token) {
         this.requesterID = requesterID;
         this.targetUsername = targetUsername;
         this.name = name;
@@ -52,6 +52,7 @@ public class ChangeAttributesData {
         this.email = email;
         /*this.password = password;*/
         this.confirmation = confirmation;
+        this.token = token; // Token de autenticação do utilizador que está a fazer a alteração
         
     }
 
@@ -84,6 +85,8 @@ public class ChangeAttributesData {
                 (
                 profile == null ||
 				profile.matches("(?i)public|publico|público|privado|private")) &&
+
+                token != null &&
 				
 				// Codiçoes para validar os campos opcionais
 	

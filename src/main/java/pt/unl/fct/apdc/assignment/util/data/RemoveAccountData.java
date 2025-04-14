@@ -7,8 +7,13 @@ public class RemoveAccountData {
 
     public RemoveAccountData() {}
 
-    public RemoveAccountData(String requesterID, String targetUser) {
+    public RemoveAccountData(String requesterID, String targetUser, String token) {
         this.requesterID = requesterID;
         this.targetUser = targetUser;
+        this.token = token; // Token de autenticação do utilizador que está a fazer a alteração
+    }
+
+    public boolean validAttributes() {
+        return requesterID != null && targetUser != null && token != null;
     }
 }

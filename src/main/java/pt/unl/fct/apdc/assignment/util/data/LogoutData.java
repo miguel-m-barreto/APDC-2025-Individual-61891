@@ -11,7 +11,7 @@ public class LogoutData {
         this.token = token;
     }
 
-    public boolean isValid() {
+    public boolean validAttributes() {
         return requesterID != null && !requesterID.isBlank() &&
                 token != null && !token.isBlank();
     }

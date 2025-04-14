@@ -8,9 +8,14 @@ public class ChangeRoleData {
 
     public ChangeRoleData() {}
 
-    public ChangeRoleData(String requesterID, String targetUser, String newRole) {
+    public ChangeRoleData(String requesterID, String targetUser, String newRole, String token) {
         this.requesterID = requesterID;
         this.targetUser = targetUser;
         this.newRole = newRole;
+        this.token = token;
+    }
+
+    public boolean validAttributes() {
+        return requesterID != null && targetUser != null && newRole != null && token != null;
     }
 }

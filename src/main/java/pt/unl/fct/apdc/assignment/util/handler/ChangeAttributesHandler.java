@@ -103,34 +103,16 @@ public class ChangeAttributesHandler {
     
 
     private static boolean maybeSet(Entity.Builder builder, Entity original, String field, String newValue) {
-        if (newValue != null && (!original.contains(field) || !original.getString(field).equals(newValue))) {
-            builder.set(field, newValue);
-            return true;
+        if (newValue.isEmpty() || newValue.equals(EMPTY_STRING) || newValue == null) {
+            builder.set(field, original.getString(field));          
+        } else {
+            if ((!original.contains(field) || !original.getString(field).equals(newValue))) {
+                builder.set(field, newValue);
+                return true;
+            }
         }
+        
         return false;
     }
-
-
-    private static Entity.Builder buildNew(Entity original, ChangeAttributesData data, String newUsername) {
-        Key newKey = datastore.newKeyFactory().setKind("User").newKey(newUsername);
-
-        return Entity.newBuilder(newKey)
-                .set("user_name", original.contains("user_name") ? original.getString("user_name") : EMPTY_STRING)
-                .set("user_email", original.contains("user_email") ? original.getString("user_email") : EMPTY_STRING)
-                .set("user_phone", original.contains("user_phone") ? original.getString("user_phone") : EMPTY_STRING)
-                .set("user_address", original.contains("user_address") ? original.getString("user_address") : EMPTY_STRING)
-                .set("user_job", original.contains("user_job") ? original.getString("user_job") : EMPTY_STRING)
-                .set("user_employer", original.contains("user_employer") ? original.getString("user_employer") : EMPTY_STRING)
-                .set("user_nif", original.contains("user_nif") ? original.getString("user_nif") : EMPTY_STRING)
-                .set("user_cc", original.contains("user_cc") ? original.getString("user_cc") : EMPTY_STRING)
-                .set("user_profile", original.contains("user_profile") ? original.getString("user_profile") : EMPTY_STRING)
-                .set("user_employer_nif", original.contains("user_employer_nif") ? original.getString("user_employer_nif") : EMPTY_STRING)
-                .set("user_photo_url", original.contains("user_photo_url") ? original.getString("user_photo_url") : EMPTY_STRING)
-                //.set("user_pwd", original.getString("user_pwd")) // Password é alterada aqui
-                .set("user_role", original.contains("user_role") ? original.getString("user_role") : EMPTY_STRING)
-                .set("user_account_state", original.contains("user_account_state") ? original.getString("user_account_state") : EMPTY_STRING)
-                .set("user_creation_time", original.contains("user_creation_time") ? original.getLong("user_creation_time") : System.currentTimeMillis());
-    }
-
     
 }

@@ -29,7 +29,7 @@ public class WorkSheetData {
 
     /** Validação usada na criação por BACKOFFICE */
     public boolean isValidForBackofficeCreate() {
-        if (isBlank(reference) || isBlank(description) || isBlank(targetType) || isBlank(adjudicationStatus)) {
+        if (isBlank(reference) || isBlank(description) || isBlank(targetType) || isBlank(adjudicationStatus) || isBlank(token)) {
             return false;
         }
 
@@ -47,6 +47,7 @@ public class WorkSheetData {
                isValidDate(endDate) &&
                !isBlank(partnerAccount) &&
                !isBlank(companyName) &&
+               !isBlank(token) &&
                companyNIF != null && companyNIF.matches("\\d{9}");
     }
 
@@ -54,6 +55,7 @@ public class WorkSheetData {
     public boolean isValidForPartnerUpdate() {
         return !isBlank(reference) &&
                !isBlank(workState) &&
+                !isBlank(token) &&
                isValidWorkState(workState);
     }
 

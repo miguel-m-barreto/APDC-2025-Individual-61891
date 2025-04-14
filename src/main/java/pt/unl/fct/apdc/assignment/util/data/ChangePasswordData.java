@@ -1,5 +1,7 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
+import org.checkerframework.checker.units.qual.t;
+
 public class ChangePasswordData {
     public String requesterID;       // Token, username ou email
     public String oldPassword;
@@ -9,15 +11,16 @@ public class ChangePasswordData {
 
     public ChangePasswordData() {}
 
-    public ChangePasswordData(String requesterID, String oldPassword, String newPassword, String confirmation) {
+    public ChangePasswordData(String requesterID, String oldPassword, String newPassword, String confirmation, String token) {
         this.requesterID = requesterID;
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
         this.confirmation = confirmation;
+        this.token = token; // Token de autenticação do utilizador que está a fazer a alteração
     }
 
-    public boolean isValid() {
-        return requesterID != null && oldPassword != null && newPassword != null &&
+    public boolean validAttributes() {
+        return requesterID != null && oldPassword != null && newPassword != null && token != null &&
                newPassword.equals(confirmation) &&
                newPassword.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,32}$");
     }

@@ -19,8 +19,9 @@ public class ChangeStateResource {
     @Path("/admin")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeAsAdmin(ChangeAccountStateData data) {
-        if (data == null || data.requesterID == null || data.targetUser == null || data.newState == null)
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados incompletos.").build();
+        if (!data.validAttributes()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
+        }
 
         // Verificar sessão
         Optional<Entity> tokenOpt = DatastoreQueries.getTokenEntityByID(data.token);

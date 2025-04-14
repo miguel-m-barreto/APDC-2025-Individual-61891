@@ -19,7 +19,7 @@ public class ChangePasswordResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changePassword(ChangePasswordData data) {
-        if (!data.isValid()) {
+        if (!data.validAttributes()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
         }
 

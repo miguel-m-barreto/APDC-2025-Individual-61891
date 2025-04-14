@@ -14,4 +14,8 @@ public class ChangeAccountStateData {
         this.newState = newState;
         this.token = token;
     }
+
+    public boolean validAttributes() {
+        return requesterID != null && newState != null && token != null;
+    }
 }

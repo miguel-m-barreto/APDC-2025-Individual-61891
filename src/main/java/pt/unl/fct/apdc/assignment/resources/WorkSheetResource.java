@@ -39,7 +39,7 @@ public class WorkSheetResource {
     @Path("/adjudicate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response adjudicate(WorkSheetData data) {
-        if (data == null || data.requesterID == null || data.requesterID.isBlank())
+        if (data == null || data.requesterID == null || data.requesterID.isBlank() || data.token == null)
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos.").build();
 
         // Verificar sessão
