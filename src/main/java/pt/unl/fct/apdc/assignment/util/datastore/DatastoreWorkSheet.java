@@ -4,9 +4,19 @@ import com.google.cloud.datastore.*;
 import jakarta.ws.rs.core.Response;
 import pt.unl.fct.apdc.assignment.util.data.WorkSheetData;
 
+import static pt.unl.fct.apdc.assignment.util.StringUtil.normalizeWorksheetStatus;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+
 
 public class DatastoreWorkSheet {
 
@@ -35,7 +45,7 @@ public class DatastoreWorkSheet {
             .set("reference", data.reference)
             .set("description", data.description)
             .set("targetType", data.targetType)
-            .set("adjudicationStatus", data.adjudicationStatus)
+            .set("adjudicationStatus", normalizeWorksheetStatus(data.adjudicationStatus))
             .set("worksheet_token", newToken);
 
         ds.put(builder.build());
@@ -96,7 +106,7 @@ public class DatastoreWorkSheet {
             return Response.status(Response.Status.FORBIDDEN).entity("Não tens permissão para editar esta obra.").build();
 
         Entity updated = Entity.newBuilder(ws)
-            .set("workState", data.workState)
+            .set("workState", normalizeWorksheetStatus(data.workState))
             .set("observations", data.observations != null ? data.observations : EMPTY_STRING)
             .build();
 
@@ -139,4 +149,91 @@ public class DatastoreWorkSheet {
             return "";
         }
     }
+
+    public static Response listWorksheets() {
+    
+        Query<Entity> query = Query.newEntityQueryBuilder().setKind("WorkSheet").build();
+        QueryResults<Entity> results = ds.run(query);
+    
+        JsonArray array = new JsonArray();
+        while (results.hasNext()) {
+            Entity ws = results.next();
+    
+            JsonObject obj = new JsonObject();
+            obj.addProperty("reference", ws.getString("reference"));
+            obj.addProperty("description", ws.getString("description"));
+            obj.addProperty("targetType", getOr(ws, "targetType"));
+            obj.addProperty("adjudicationStatus", getOr(ws, "adjudicationStatus"));
+            obj.addProperty("adjudicationDate", getOr(ws, "adjudicationDate"));
+            obj.addProperty("startDate", getOr(ws, "startDate"));
+            obj.addProperty("endDate", getOr(ws, "endDate"));
+            obj.addProperty("partnerAccount", getOr(ws, "partnerAccount"));
+            obj.addProperty("companyName", getOr(ws, "companyName"));
+            obj.addProperty("companyNIF", getOr(ws, "companyNIF"));
+            obj.addProperty("workState", getOr(ws, "workState"));
+            obj.addProperty("observations", getOr(ws, "observations"));
+            array.add(obj);
+        }
+    
+        JsonObject response = new JsonObject();
+        response.add("worksheets", array);
+        response.addProperty("count", array.size());
+    
+        return Response.ok(response.toString()).build();
+    }
+    
+    private static String getOr(Entity entity, String field) {
+        return entity.contains(field) ? entity.getString(field) : "NOT DEFINED";
+    }
+
+
+    // casos possiveis: "ADJUDICADO,CONCLUIDO"
+    public static Response listByState(String states, String role, String username) {
+    if (!role.equals("BACKOFFICE") && !role.equals("ADMIN")) {
+        return Response.status(Response.Status.FORBIDDEN).entity("Apenas BACKOFFICE e ADMIN podem listar folhas por estado.").build();
+    }
+
+    Set<String> requestedStates = Arrays.stream(states.split(","))
+        .map(String::trim)
+        .map(String::toUpperCase)
+        .collect(Collectors.toSet());
+
+        for (String string : requestedStates) {
+            string = normalizeWorksheetStatus(string);
+        }
+
+        Query<Entity> query = Query.newEntityQueryBuilder().setKind("WorkSheet").build();
+        QueryResults<Entity> results = ds.run(query);
+
+        JsonArray array = new JsonArray();
+        while (results.hasNext()) {
+            Entity ws = results.next();
+            String status = ws.contains("adjudicationStatus") ? ws.getString("adjudicationStatus").toUpperCase() : "";
+
+            if (requestedStates.contains(status)) {
+                JsonObject obj = new JsonObject();
+                obj.addProperty("reference", ws.getString("reference"));
+                obj.addProperty("description", ws.getString("description"));
+                obj.addProperty("targetType", getOr(ws, "targetType"));
+                obj.addProperty("adjudicationStatus", getOr(ws, "adjudicationStatus"));
+                obj.addProperty("adjudicationDate", getOr(ws, "adjudicationDate"));
+                obj.addProperty("startDate", getOr(ws, "startDate"));
+                obj.addProperty("endDate", getOr(ws, "endDate"));
+                obj.addProperty("partnerAccount", getOr(ws, "partnerAccount"));
+                obj.addProperty("companyName", getOr(ws, "companyName"));
+                obj.addProperty("companyNIF", getOr(ws, "companyNIF"));
+                obj.addProperty("workState", getOr(ws, "workState"));
+                obj.addProperty("observations", getOr(ws, "observations"));
+                array.add(obj);
+            }
+        }
+
+        JsonObject response = new JsonObject();
+        response.add("worksheets", array);
+        response.addProperty("count", array.size());
+
+        return Response.ok(response.toString()).build();
+    }
+
+    
 }

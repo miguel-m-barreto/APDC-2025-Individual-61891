@@ -1,5 +1,7 @@
 package pt.unl.fct.apdc.assignment.util.data;
 
+import static pt.unl.fct.apdc.assignment.util.StringUtil.normalizeWorksheetStatus;
+
 public class WorkSheetData {
     public String requesterID;
 
@@ -26,6 +28,7 @@ public class WorkSheetData {
     private static final String DATE_REGEX =
             "^\\d{2}[-/]((0[1-9])|(1[0-2])|(?i)(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))[-/]\\d{4}$";
     private static final String ISO_DATE_REGEX = "^\\d{4}-\\d{2}-\\d{2}$";
+
 
     /** Validação usada na criação por BACKOFFICE */
     public boolean isValidForBackofficeCreate() {
