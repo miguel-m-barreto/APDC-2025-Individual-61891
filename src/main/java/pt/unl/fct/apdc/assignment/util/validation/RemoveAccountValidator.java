@@ -17,6 +17,10 @@ public class RemoveAccountValidator {
             return false;
         }
 
+        if (targetUsername.equals("root")) {
+            return false;
+        }
+
         return Permission.canRemoveAccount(requesterRole, targetRole);
     }
 }

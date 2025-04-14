@@ -53,7 +53,7 @@ public class ChangeAttributesHandler {
         Entity.Builder builder;
         boolean hasChanges = false;
     
-        // 🔁 Se mudar a chave (username), construir nova entidade
+        // Se mudar a chave (username), construir nova entidade
         if (changingKey && role.equalsIgnoreCase("ADMIN")) {
             if (DatastoreQueries.getUserByUsername(data.username).isPresent()) {
                 return Response.status(Response.Status.CONFLICT).entity("Novo username já está em uso.").build();
@@ -62,7 +62,7 @@ public class ChangeAttributesHandler {
             builder = Entity.newBuilder(original);
             builder.setKey(datastore.newKeyFactory().setKind("User").newKey(data.username));
             //buildNew(original, data, data.username);
-            datastore.delete(original.getKey());
+            
             hasChanges = true;
         } else {
             builder = Entity.newBuilder(original);
@@ -98,17 +98,22 @@ public class ChangeAttributesHandler {
         }
     
         datastore.put(builder.build());
+        datastore.delete(original.getKey());
         return Response.ok("Atributos atualizados com sucesso.").build();
     }
     
 
     private static boolean maybeSet(Entity.Builder builder, Entity original, String field, String newValue) {
-        if (newValue.isEmpty() || newValue.equals(EMPTY_STRING) || newValue == null) {
+        if (newValue == null || newValue.isEmpty() || newValue.equals(EMPTY_STRING)) {
             builder.set(field, original.getString(field));          
         } else {
-            if ((!original.contains(field) || !original.getString(field).equals(newValue))) {
+            if (!original.getString(field).equals(newValue)) {
                 builder.set(field, newValue);
                 return true;
+            }
+            else {
+                builder.set(field, original.getString(field)); // Reverter para o valor original
+                return false; // Nenhuma alteração foi feita
             }
         }
         

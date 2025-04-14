@@ -33,6 +33,7 @@ public class ChangeAttributesData {
                                 String address, String job, String employer, String nif, String cc,
                                 String profile, String employer_nif, String photoURL, String role,
                                 String state, String username, String email, /*String password,*/ String confirmation, String token) {
+        
         this.requesterID = requesterID;
         this.targetUsername = targetUsername;
         this.name = name;
